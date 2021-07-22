@@ -18,18 +18,18 @@ public class script {
 
         File fichero = new File(pathFichero);
 
-        String output = "";
+        String header = "";
         int nivel = 1;
 
         if(fichero.isDirectory()){
-            output = "[*] Multienvio" + "\n";
-            output += procesarDirectorio(fichero, nivel);
+            header = "[*] Multienvio" + "\n";
+            header += procesarDirectorio(fichero, nivel);
         }
         else{
-            output = "fichero - nivel " + nivel + " - " + fichero.getName() + " - " + fichero.length() + "\n";
+            header = "fichero - nivel " + nivel + " - " + fichero.getName() + " - " + fichero.length() + "\n";
         }
         
-        System.out.println(output);
+        System.out.println(header);
     }
 
     //D:\Biblioteca\Escritorio\Prueba

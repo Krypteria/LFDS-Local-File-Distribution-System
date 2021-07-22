@@ -2,11 +2,16 @@ package Model;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class Server implements Runnable{
     private final int PORT = 2222;
@@ -48,7 +53,8 @@ public class Server implements Runnable{
                 System.out.println("Esperando");
                 Socket clientSocket = this.serverSocket.accept();
                 System.out.println("Fin espera");
-                this.receive_file_from(clientSocket);
+                this.receiveFiles(clientSocket, this.receiveHeader(clientSocket));
+                //this.receiveFile(clientSocket);
             }
             catch(IOException e){
                 System.out.println("Error al establecer la conexión entre cliente y servidor");
@@ -56,12 +62,35 @@ public class Server implements Runnable{
         }
     }
 
-    private void receive_file_from(Socket clientSocket){
+    private String receiveHeader(Socket clientSocket){
+        String header = "";
+        try {
+            DataInputStream input = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
+            input.read(this.buffer, 0, this.BUFFERSIZE);
+            header = new String(this.buffer);
+
+            System.out.println("[*] HEADER: ");
+            System.out.println(header);
+            System.out.println("-----");
+        } catch (IOException e) {
+            System.out.println("Error al recibir el header");
+        }
+        
+        return header;
+    }
+
+    private void receiveFiles(Socket clientSocket, String header){
+        //Proceso la primera linea del header
+        //Si es envio simple -> receiveFile directamente
+        //Si es un envio complejo -> 
+        receiveFile(clientSocket);
+    }
+
+    private void receiveFile(Socket clientSocket){
         try{
             String rutaDestino = "D:\\Biblioteca\\Escritorio\\Prueba\\quijote.pdf";
-            BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(new File(rutaDestino)));
-            InputStream input = clientSocket.getInputStream();
-
+            DataOutputStream output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(rutaDestino))));
+            DataInputStream input = new DataInputStream(new BufferedInputStream (clientSocket.getInputStream()));
 
             int bytesReaded;            
             while((bytesReaded = input.read(this.buffer)) >= 0){
