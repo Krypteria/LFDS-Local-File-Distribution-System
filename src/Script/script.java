@@ -36,12 +36,13 @@ public class script {
 
     public static String procesarDirectorio(File fichero, int nivel){
         String output = "D:" + nivel + ":" + fichero.getName() + "\n";
+        nivel++;
         for (File ficherosAdjunto : fichero.listFiles()){
             if(ficherosAdjunto.isDirectory()){
-                output += procesarDirectorio(ficherosAdjunto, nivel + 1);
+                output += procesarDirectorio(ficherosAdjunto, nivel);
             }
             else if (ficherosAdjunto.isFile()){
-                output += "F:" + nivel + ":" + ficherosAdjunto.getName() + ":" + ficherosAdjunto.length() + "\n";
+                output += "F:" + nivel + ":" + ficherosAdjunto.length() +  ":" + ficherosAdjunto.getName() + "\n";
             }
         }
         return output;

@@ -2,7 +2,12 @@ package Model;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 import java.util.Scanner;
+import java.util.Stack;
+
+import Misc.Pair;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -10,28 +15,36 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 public class Server implements Runnable{
     private final int PORT = 2222;
     private final int BUFFERSIZE = 8192;
+    private final String SEPARATOR = "\\";
+
+    private final String defaultRoute = "D:\\Biblioteca\\Escritorio\\PruebaRecibo";
 
     private ServerSocket serverSocket;
     private byte[] buffer;
+
+    private Stack<Pair<String, Integer>> directoryStack;
+
+    private DataOutputStream output;
+    private DataInputStream input;
 
     public Server(){
         System.out.println("Servidor iniciandose");
         try{
             this.serverSocket = new ServerSocket(this.PORT);
             this.buffer = new byte[this.BUFFERSIZE];
+            this.directoryStack = new Stack<Pair<String, Integer>>();
+            this.directoryStack.push(new Pair<String, Integer>(this.defaultRoute, 0));
         }
         catch(IOException e){
             System.out.println("Error al crear el socket del servidor");
         }
     }
 
-    public void openServer(){
+    /*public void openServer(){
         //this.serverSocket = new ServerSocket(this.port);
         //this.run();
     }
@@ -43,6 +56,11 @@ public class Server implements Runnable{
     public void resetServer(){
         this.closeServer();
         this.openServer();
+    }*/
+
+    private void clearDirectoryStack(){
+        this.directoryStack.clear();
+        this.directoryStack.push(new Pair<String, Integer>(this.defaultRoute, 0));
     }
 
     @Override
@@ -53,8 +71,7 @@ public class Server implements Runnable{
                 System.out.println("Esperando");
                 Socket clientSocket = this.serverSocket.accept();
                 System.out.println("Fin espera");
-                this.receiveFiles(clientSocket, this.receiveHeader(clientSocket));
-                //this.receiveFile(clientSocket);
+                this.processHeader(clientSocket, this.receiveHeader(clientSocket));
             }
             catch(IOException e){
                 System.out.println("Error al establecer la conexión entre cliente y servidor");
@@ -65,13 +82,11 @@ public class Server implements Runnable{
     private String receiveHeader(Socket clientSocket){
         String header = "";
         try {
-            DataInputStream input = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
-            input.read(this.buffer, 0, this.BUFFERSIZE);
-            header = new String(this.buffer);
+            this.input = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
+            header = this.input.readUTF();
 
             System.out.println("[*] HEADER: ");
             System.out.println(header);
-            System.out.println("-----");
         } catch (IOException e) {
             System.out.println("Error al recibir el header");
         }
@@ -79,27 +94,57 @@ public class Server implements Runnable{
         return header;
     }
 
-    private void receiveFiles(Socket clientSocket, String header){
-        //Proceso la primera linea del header
-        //Si es envio simple -> receiveFile directamente
-        //Si es un envio complejo -> 
-        receiveFile(clientSocket);
+    private void processHeader(Socket clientSocket, String header){
+        Scanner headerInfo = new Scanner(header);
+        while(headerInfo.hasNextLine()){
+            //Obtengo la información referente al siguiente fichero
+            String fileInfo = headerInfo.nextLine();
+            String fileName = fileInfo.substring(fileInfo.lastIndexOf(":") + 1, fileInfo.length());
+            String filePath = this.directoryStack.peek().getFirst() + SEPARATOR + fileName;
+            int deepness = Character.getNumericValue(fileInfo.charAt(2));
+            int fileSize = Integer.parseInt(fileInfo.substring(4, fileInfo.lastIndexOf(":")));
+
+            if(fileInfo.charAt(0) == 'D'){
+                System.out.println(new File(filePath).mkdir());
+                this.directoryStack.push(new Pair<String, Integer>(filePath,deepness));
+            }
+            else if(fileInfo.charAt(0) == 'F'){
+                //Para que un fichero pertenezca a un directorio, tiene que tener más profundidad que este
+                while(!this.directoryStack.isEmpty() && this.directoryStack.peek().getSecond() >= deepness){
+                    this.directoryStack.pop();
+                    filePath = this.directoryStack.peek().getFirst() + SEPARATOR + fileName;
+                }
+                this.receiveFile(clientSocket, filePath, fileSize);
+            }
+        }
+
+        //Cerramos conexiones
+        try {
+            this.output.close();
+            this.input.close();
+            clientSocket.close();
+        } catch (IOException e) {
+            System.out.println("Error al cerrar conexiones en el servidor");
+        }
+     
+        headerInfo.close();
+        this.clearDirectoryStack();
     }
 
-    private void receiveFile(Socket clientSocket){
+    private void receiveFile(Socket clientSocket, String filePath, int fileSize){
         try{
-            String rutaDestino = "D:\\Biblioteca\\Escritorio\\Prueba\\quijote.pdf";
-            DataOutputStream output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(rutaDestino))));
-            DataInputStream input = new DataInputStream(new BufferedInputStream (clientSocket.getInputStream()));
+            System.out.println(filePath);
+            this.output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(filePath))));
+            this.input = new DataInputStream(new BufferedInputStream (clientSocket.getInputStream()));
 
-            int bytesReaded;            
-            while((bytesReaded = input.read(this.buffer)) >= 0){
-                output.write(this.buffer, 0, bytesReaded);
+            int bytesReaded;
+
+            while(fileSize > 0 && (bytesReaded = this.input.read(this.buffer, 0, Math.min(this.BUFFERSIZE, fileSize))) >= 0){
+                this.output.write(this.buffer, 0, bytesReaded);
+                fileSize -= bytesReaded;
                 System.out.println("Recibiendo " + bytesReaded + " bytes");
             }
     
-            output.close(); //cierro el stream para que los cambios se apliquen
-            input.close();
             System.out.println("Archivo recibido correctamente");
         }
         catch(IOException e){
