@@ -18,7 +18,7 @@ public class Client implements Runnable{
     public void run() {
         System.out.println("Ejecutando método run del cliente");
         System.out.println("Conexión establecida");
-        String rutaSrc = "D:\\Biblioteca\\Escritorio\\Prueba";
+        String rutaSrc = "D:\\Biblioteca\\Escritorio\\Proyectos2";
         File file = new File(rutaSrc);
         this.networking.send(file);
     }

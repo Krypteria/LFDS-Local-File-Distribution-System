@@ -2,7 +2,6 @@ package Model;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.List;
 import java.util.Scanner;
 import java.util.Stack;
 
@@ -135,12 +134,11 @@ public class Server implements Runnable{
         try{
             System.out.println(filePath);
             this.output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(filePath))));
-            this.input = new DataInputStream(new BufferedInputStream (clientSocket.getInputStream()));
 
             int bytesReaded;
-
             while(fileSize > 0 && (bytesReaded = this.input.read(this.buffer, 0, Math.min(this.BUFFERSIZE, fileSize))) >= 0){
                 this.output.write(this.buffer, 0, bytesReaded);
+                this.output.flush();
                 fileSize -= bytesReaded;
                 System.out.println("Recibiendo " + bytesReaded + " bytes");
             }

@@ -112,6 +112,7 @@ public class Client_networking{
             int bytesReaded;          
             while(fileSize > 0 && (bytesReaded = this.input.read(this.buffer, 0, Math.min(this.BUFFERSIZE, fileSize))) >= 0){
                 this.output.write(this.buffer, 0, bytesReaded);
+                this.output.flush();
                 fileSize -= bytesReaded;
                 System.out.println("Enviando " + bytesReaded + " bytes");
             }
