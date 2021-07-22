@@ -2,27 +2,24 @@ package Model;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.io.PrintWriter;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class Server implements Runnable{
-    private int port = 2222;
+    private final int PORT = 2222;
+    private final int BUFFERSIZE = 8192;
+
     private ServerSocket serverSocket;
-    private char[] buffer;
-    private int bufferSize = 8192;
+    private byte[] buffer;
 
     public Server(){
         System.out.println("Servidor iniciandose");
         try{
-            this.serverSocket = new ServerSocket(this.port);
-            System.out.println("Dirección IP del servidor: " + this.serverSocket.getInetAddress().toString());
-            this.buffer = new char[this.bufferSize];
-            // this.run();
+            this.serverSocket = new ServerSocket(this.PORT);
+            this.buffer = new byte[this.BUFFERSIZE];
         }
         catch(IOException e){
             System.out.println("Error al crear el socket del servidor");
@@ -62,8 +59,8 @@ public class Server implements Runnable{
     private void receive_file_from(Socket clientSocket){
         try{
             String rutaDestino = "D:\\Biblioteca\\Escritorio\\Prueba\\quijote.pdf";
-            FileWriter output = new FileWriter(new File(rutaDestino));
-            BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(new File(rutaDestino)));
+            InputStream input = clientSocket.getInputStream();
 
 
             int bytesReaded;            
@@ -73,6 +70,7 @@ public class Server implements Runnable{
             }
     
             output.close(); //cierro el stream para que los cambios se apliquen
+            input.close();
             System.out.println("Archivo recibido correctamente");
         }
         catch(IOException e){
