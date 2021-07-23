@@ -1,24 +1,20 @@
 package Launcher;
 
-import Model.Local_distribution_system;
+import View.MainWindow;
+import Controller.Controller;
 
-//Borrar
-import Model.Server;
-import Model.Client;
-import java.util.Scanner;
+import javax.swing.SwingUtilities;
+
 
 public class Main {
 
 	public static void main(String[] args) {
-		Local_distribution_system app = new Local_distribution_system();
-        //app.addNewHost("Alejandro", "192.168.1.3");
-        //app.addNewHost("Juan", "192.168.1.1");
-        //app.addNewHost("Cristina", "192.168.1.21");
-        //app.seeHosts();
-
-        
-        new Thread(new Server()).start();
-        new Thread(new Client("0.0.0.0", null)).start();;
+        SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				new MainWindow(new Controller());
+			}
+		});
 	}
 }
 

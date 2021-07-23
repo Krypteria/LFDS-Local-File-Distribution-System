@@ -2,17 +2,21 @@ package Model;
 
 public class Host{
     private String name;
-    private String IP;
+    private String addr;
     private Stats stats;
 
-    public Host(String name, String IP){
+    public Host(String name, String addr){
         this.name = name;
-        this.IP = IP;
+        this.addr = addr;
         this.stats = new Stats();
     }
 
     public String getName(){
         return this.name;
+    }
+
+    public String getAddress(){
+        return this.addr;
     }
 
     public String getStats(){

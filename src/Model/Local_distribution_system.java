@@ -1,16 +1,28 @@
 package Model;
+
+import java.io.File;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+
 
 public class Local_distribution_system {
-    private HashMap<String, Host> listaHosts;
+    private HashMap<String, Host> hostsMap;
+    private Server server;
 
     public Local_distribution_system(){
-        this.listaHosts = new HashMap<>();
+        this.hostsMap = new HashMap<>();
+        this.server = new Server();
+        this.openServer();
+
+        this.addNewHost("Alejandro", "192.168.1.31");
+        this.addNewHost("Jaime", "192.168.110.31");
+        this.addNewHost("Juan Manuel", "192.2.1.31");
     }
 
-    public void addNewHost(String name, String IP){
-        this.listaHosts.put(IP, new Host(name, IP));
+    public void addNewHost(String name, String addr){
+        this.hostsMap.put(addr, new Host(name, addr));
     }
 
     public void editHost(){
@@ -21,31 +33,30 @@ public class Local_distribution_system {
 
     }
 
-    public void seeHosts(){
-        for (Map.Entry<String, Host> elemento : this.listaHosts.entrySet()) {
-            String IP = elemento.getKey();
-            Host host = elemento.getValue();
-
-            System.out.print(IP + ":" + host.getName() + " " + host.getStats());
-        }
-    }
+    public List<Host> getAllHosts(){
+        return Collections.unmodifiableList(new ArrayList<Host>(this.hostsMap.values()));
+    } 
 
     //Networking methods
-
-    public void sendFile(){
-
+    
+    //GUI -> selecciono fichero e ip destino
+    //Host -> stats -> 
+    public void sendFile(String addr_dst, File file){
+        Client client = new Client(addr_dst, file);
+        new Thread(client).start();
     }
 
     public void openServer(){
-
+        this.server.openServer();
     }
     
     public void closeServer(){
-
+        this.server.closeServer();
     }
 
     public void resetServer(){
-
+        this.closeServer();
+        this.openServer();
     }
 
     //Serialitation methods

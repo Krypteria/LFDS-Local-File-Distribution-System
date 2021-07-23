@@ -30,6 +30,9 @@ public class Server implements Runnable{
     private DataOutputStream output;
     private DataInputStream input;
 
+    private boolean avalaible;
+    private boolean endServerActivity;
+
     public Server(){
         System.out.println("Servidor iniciandose");
         try{
@@ -37,25 +40,43 @@ public class Server implements Runnable{
             this.buffer = new byte[this.BUFFERSIZE];
             this.directoryStack = new Stack<Pair<String, Integer>>();
             this.directoryStack.push(new Pair<String, Integer>(this.defaultRoute, 0));
+
+            this.avalaible = true;
+            this.endServerActivity = false;
         }
         catch(IOException e){
             System.out.println("Error al crear el socket del servidor");
         }
     }
 
-    /*public void openServer(){
-        //this.serverSocket = new ServerSocket(this.port);
-        //this.run();
+    public void openServer(){
+        new Thread(this).start();
     }
 
     public void closeServer(){
-        //this.serverSocket.close();
+        //A la hora de finalizarlo lo que haré será esperar a que una transferencia se termine -> dar la opción a cortarla
+        if(!this.isAvalaible()){
+            //Lanzaría un jdialog con la pregunta
+            System.out.println("El servidor está activo actualmente, se cerrará cuando se termine la transferencia");
+
+            //Podemos intentar cerrar el socket y que el cliente reciba una excepción controlada indicando el suceso
+        }
+
+        this.stop();
     }
 
     public void resetServer(){
         this.closeServer();
         this.openServer();
-    }*/
+    }
+
+    private boolean isAvalaible(){
+        return this.avalaible;
+    }
+
+    private void stop(){
+        this.endServerActivity = true;
+    }
 
     private void clearDirectoryStack(){
         this.directoryStack.clear();
@@ -65,17 +86,23 @@ public class Server implements Runnable{
     @Override
     public void run(){
         System.out.println("Ejecutando método run");
-        while(true){
+        while(!this.endServerActivity){
             try{
                 System.out.println("Esperando");
                 Socket clientSocket = this.serverSocket.accept();
                 System.out.println("Fin espera");
-                this.processHeader(clientSocket, this.receiveHeader(clientSocket));
+                this.processClientTransference(clientSocket);
             }
             catch(IOException e){
                 System.out.println("Error al establecer la conexión entre cliente y servidor");
             }
         }
+    }
+
+    private void processClientTransference(Socket clientSocket){
+        this.avalaible = false;
+        this.processHeader(clientSocket, this.receiveHeader(clientSocket));
+        this.avalaible = true;
     }
 
     private String receiveHeader(Socket clientSocket){
@@ -104,7 +131,7 @@ public class Server implements Runnable{
             int fileSize = Integer.parseInt(fileInfo.substring(4, fileInfo.lastIndexOf(":")));
 
             if(fileInfo.charAt(0) == 'D'){
-                System.out.println(new File(filePath).mkdir());
+                new File(filePath).mkdir();
                 this.directoryStack.push(new Pair<String, Integer>(filePath,deepness));
             }
             else if(fileInfo.charAt(0) == 'F'){

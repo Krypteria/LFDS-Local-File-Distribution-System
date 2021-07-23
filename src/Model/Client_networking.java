@@ -90,7 +90,7 @@ public class Client_networking{
         return header;
     }
 
-    private String getFileHeader(File file, int deepness){ //EL SALTO DE LINEA ESTE ES EL CAUSANDO DEL ESPACIO EN EL HEADER
+    private String getFileHeader(File file, int deepness){
         this.filePaths.add(new Pair<String, Integer>(file.getAbsolutePath(), Integer.parseInt("" + file.length())));
         return "F:" + deepness + ":" + file.length() + ":" + file.getName() + "\n";
     }
@@ -104,7 +104,6 @@ public class Client_networking{
     }
 
     private void sendFile(File file, int fileSize){
-        System.out.println(file.getAbsolutePath());
         try{
             this.input = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
             this.output = new DataOutputStream(new BufferedOutputStream(this.clientSocket.getOutputStream()));
