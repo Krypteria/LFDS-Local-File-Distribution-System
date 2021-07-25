@@ -16,4 +16,12 @@ public class Controller{
     public List<Host> getAllHosts(){
         return lds.getAllHosts();
     }
+
+    public void editHost(String addr, String name, String newAddr){
+        this.lds.editHost(addr, name, newAddr);
+    }
+
+    public void removeHost(String addr){ 
+        this.lds.removeHost(addr);
+    }
 }

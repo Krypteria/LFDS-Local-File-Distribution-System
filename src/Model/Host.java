@@ -22,4 +22,12 @@ public class Host{
     public String getStats(){
         return this.stats.getStats();
     }
+
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public void setAddr(String addr){
+        this.addr = addr;
+    } 
 }

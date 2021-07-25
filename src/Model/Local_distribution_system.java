@@ -25,12 +25,16 @@ public class Local_distribution_system {
         this.hostsMap.put(addr, new Host(name, addr));
     }
 
-    public void editHost(){
-
+    public void editHost(String addr, String name, String newAddr){
+        Host host = this.hostsMap.get(addr);
+        host.setName(name);
+        host.setAddr(newAddr);
+        this.hostsMap.remove(addr);
+        this.hostsMap.put(newAddr, host);
     }
 
-    public void removeHost(){
-
+    public void removeHost(String addr){ 
+        this.hostsMap.remove(addr);
     }
 
     public List<Host> getAllHosts(){
