@@ -19,7 +19,7 @@ public class MainWindow extends JFrame{
 
     private void initGUI(){
         this.setTitle("File transfer system");
-        this.setSize(new Dimension(600,600));
+        this.setSize(new Dimension(1000,600));
 
         JPanel mainPanel = new JPanel(new GridLayout(1,2));
         JPanel leftPanel = new JPanel();
@@ -28,7 +28,7 @@ public class MainWindow extends JFrame{
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.PAGE_AXIS));
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.PAGE_AXIS));
 
-        HostsPanel hostsPanel = new HostsPanel(this.controller);
+        HostsPanel hostsPanel = new HostsPanel(this.controller, this);
         SendPanel sendPanel = new SendPanel(this.controller);
         ServerPanel serverPanel = new ServerPanel(this.controller);
         TransferencesPanel transferencePanel = new TransferencesPanel(this.controller);
@@ -43,6 +43,32 @@ public class MainWindow extends JFrame{
         mainPanel.add(rightPanel);
 
         this.add(mainPanel);
+        this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
 }
+
+/*
+    JDialog editar y añadir -> JDialog general con todo y que reciba un JBUTTON que sea el que cambie
+    luego en editar y añadir solo llamamos al super y fuera
+
+    Capar numero de caracteres de nombre e IP, capar lo que se mete en IP
+
+    Send panel
+
+    Jfilechooser -> verificar formatos de ficheros y todo el rollo más adelante
+    Ver como hacer que al pulsar en send se añada o elimine dinamicamente un nombre
+    Boton de enviar que inicie el envio
+
+    Server
+
+    Transfer
+
+
+
+
+
+
+
+
+*/

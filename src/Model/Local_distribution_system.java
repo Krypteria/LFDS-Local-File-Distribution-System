@@ -1,55 +1,22 @@
 package Model;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
+
+import Model.Observers.HostsObserver;
+
 
 
 public class Local_distribution_system {
-    private HashMap<String, Host> hostsMap;
+    private HostsRegister hostsRegister;
     private Server server;
 
     public Local_distribution_system(){
-        this.hostsMap = new HashMap<>();
+        this.hostsRegister = new HostsRegister();
         this.server = new Server();
-        this.openServer();
-
-        this.addNewHost("Alejandro", "192.168.1.31");
-        this.addNewHost("Jaime", "192.168.110.31");
-        this.addNewHost("Juan Manuel", "192.2.1.31");
+        //this.openServer();
     }
 
-    public void addNewHost(String name, String addr){
-        this.hostsMap.put(addr, new Host(name, addr));
-    }
-
-    public void editHost(String addr, String name, String newAddr){
-        Host host = this.hostsMap.get(addr);
-        host.setName(name);
-        host.setAddr(newAddr);
-        this.hostsMap.remove(addr);
-        this.hostsMap.put(newAddr, host);
-    }
-
-    public void removeHost(String addr){ 
-        this.hostsMap.remove(addr);
-    }
-
-    public List<Host> getAllHosts(){
-        return Collections.unmodifiableList(new ArrayList<Host>(this.hostsMap.values()));
-    } 
-
-    //Networking methods
-    
-    //GUI -> selecciono fichero e ip destino
-    //Host -> stats -> 
-    public void sendFile(String addr_dst, File file){
-        Client client = new Client(addr_dst, file);
-        new Thread(client).start();
-    }
-
+    //Server methods
     public void openServer(){
         this.server.openServer();
     }
@@ -63,8 +30,27 @@ public class Local_distribution_system {
         this.openServer();
     }
 
-    //Serialitation methods
+    //Hosts methods
+    public void addNewHost(String name, String addr){
+        this.hostsRegister.addNewHost(name, addr);
+    }
 
+    public void editHost(String name, String addr, String newAddr){
+        this.hostsRegister.editHost(name, addr, newAddr);
+    }
+
+    public void removeHost(String addr){ 
+        this.hostsRegister.removeHost(addr);
+    }
+
+    //Networking methods
+    public void sendFile(String addr_dst, File file){
+        Client client = new Client(addr_dst, file);
+        new Thread(client).start();
+    }
+
+
+    //Serialitation methods
     public void saveAppState(){
         Local_distribution_system_DAO appDao = new Local_distribution_system_DAO();
         appDao.saveAppState();
@@ -78,5 +64,10 @@ public class Local_distribution_system {
     public boolean seekValidDataFile(){
         Local_distribution_system_DAO appDao = new Local_distribution_system_DAO();
         return appDao.seekValidDataFile();
+    }
+
+    //Observer methods
+    public void addObserver(HostsObserver observer) {
+        this.hostsRegister.addObserver(observer);  
     }
 }

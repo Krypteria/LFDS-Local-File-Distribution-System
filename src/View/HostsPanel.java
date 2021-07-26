@@ -2,58 +2,98 @@ package View;
 
 import Controller.Controller;
 import Model.Host;
+import Model.Observers.HostsObserver;
+import View.Dialogs.AddHostDialog;
 
 import javax.swing.JPanel;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JLabel;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
-import java.awt.Dimension;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.ArrayList;
 
-public class HostsPanel extends JPanel{
+public class HostsPanel extends JPanel implements HostsObserver{
 
     private List<JCheckBox> sendCheckBoxesList;
-    private Controller controller;
+    private JPanel hostsContentPanel;
+    private JButton addHostButton;
 
-    public HostsPanel(Controller controller){
+    private Controller controller;
+    private MainWindow parentFrame;
+
+    public HostsPanel(Controller controller, MainWindow parentFrame){
         this.controller = controller;
         this.sendCheckBoxesList = new ArrayList<JCheckBox>();
+        this.parentFrame = parentFrame;
+        this.hostsContentPanel = new JPanel();
+        
+        this.controller.addObserver(this);
         this.initGUI();
     }
 
     private void initGUI(){
         this.setLayout(new BorderLayout(5,5));
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
-        
-        JLabel title = new JLabel("Hosts");
-        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        titlePanel.add(title);
-        titlePanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.black));
-        //titlePanel.setMaximumSize(new Dimension(10,100)); CAMBIAR
-        mainPanel.add(titlePanel);
 
-        for (Host host : this.controller.getAllHosts()) {
-            this.sendCheckBoxesList.add(new JCheckBox("Send"));
-            mainPanel.add(new HostControlPanel(this.controller, host, this.sendCheckBoxesList.get(this.sendCheckBoxesList.size() - 1)));
-        }
-
-        mainPanel.setBorder(BorderFactory.createLineBorder(Color.black, 2));
-        
         this.add(new JPanel(), BorderLayout.PAGE_START);
         this.add(new JPanel(), BorderLayout.PAGE_END);
         this.add(new JPanel(), BorderLayout.LINE_START);
         this.add(new JPanel(), BorderLayout.LINE_END);
+
+        this.addHostButton = new JButton("Add new host");
+        this.addHostButton.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                performAddAction();
+            }
+        });
         
-        this.setBackground(Color.red);
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
+		mainPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black, 2),"Hosts"));
+        mainPanel.setBackground(Color.white);
+
+        this.hostsContentPanel.setBackground(Color.white);
+        this.hostsContentPanel.setLayout(new BoxLayout(this.hostsContentPanel, BoxLayout.PAGE_AXIS));
+
+        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonsPanel.setMaximumSize(new Dimension(500,35));
+        buttonsPanel.setBackground(Color.white);
+        buttonsPanel.add(this.addHostButton);
+
+
+        mainPanel.add(buttonsPanel, BorderLayout.CENTER);
+        mainPanel.add(this.hostsContentPanel, BorderLayout.CENTER);
+
         this.add(mainPanel, BorderLayout.CENTER);
         this.setVisible(true);
+    }
+    
+    private void performAddAction(){
+        AddHostDialog dialog = new AddHostDialog(this.parentFrame);
+        int status = dialog.open();
+
+        if(status == 1){
+            controller.addNewHost(dialog.getHostName(), dialog.getHostAddr());
+        }
+    }
+
+    @Override
+    public void updateHosts(List<Host> hostList) {
+        this.hostsContentPanel.removeAll();
+        this.sendCheckBoxesList.clear();
+        for (Host host : hostList) {
+            this.sendCheckBoxesList.add(new JCheckBox("Send"));
+            this.hostsContentPanel.add(new HostControlPanel(this.controller, this.parentFrame, host, this.sendCheckBoxesList.get(this.sendCheckBoxesList.size() - 1)));
+        }
+        this.hostsContentPanel.validate();
+        this.hostsContentPanel.repaint();
     }
 }

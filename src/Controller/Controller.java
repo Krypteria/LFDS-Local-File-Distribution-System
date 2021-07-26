@@ -2,26 +2,32 @@ package Controller;
 
 import java.util.List;
 
-import Model.Host;
 import Model.Local_distribution_system;
+import Model.Observers.HostsObserver;
 
 public class Controller{
     
-    private Local_distribution_system lds;
+    private Local_distribution_system localDistributionSystem;
 
     public Controller(){
-        this.lds = new Local_distribution_system();
+        this.localDistributionSystem = new Local_distribution_system();
     }
 
-    public List<Host> getAllHosts(){
-        return lds.getAllHosts();
+    //Observer methods
+    public void addObserver(HostsObserver observer) {
+        this.localDistributionSystem.addObserver(observer);  
     }
 
-    public void editHost(String addr, String name, String newAddr){
-        this.lds.editHost(addr, name, newAddr);
+    //Other methods
+    public void editHost(String name, String addr, String newAddr){
+        this.localDistributionSystem.editHost(name, addr, newAddr);
+    }
+
+    public void addNewHost(String name, String addr){
+        this.localDistributionSystem.addNewHost(name, addr);
     }
 
     public void removeHost(String addr){ 
-        this.lds.removeHost(addr);
+        this.localDistributionSystem.removeHost(addr);
     }
 }
