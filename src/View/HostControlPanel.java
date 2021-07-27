@@ -1,5 +1,6 @@
 package View;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -60,29 +61,31 @@ public class HostControlPanel extends JPanel{
 
         this.add(hostNameLabel);
         this.add(hostAddrLabel);
+        this.add(Box.createRigidArea(new Dimension(5,0)));
         this.add(this.sendBox);
         this.add(this.editHostButton);
         this.add(this.deleteHostButton);
 
         this.setMaximumSize(new Dimension(500,50));
+        this.setPreferredSize(new Dimension(500,50));
         this.setBackground(Color.white);
         this.setVisible(true);
     }
 
-    private void performDeleteAction(){ //callback con observer en hostWindow -> updateHosts
+    private void performDeleteAction(){ 
         String text = "Do you want to delete " + this.hostNameLabel.getText() + this.hostAddrLabel.getText() + "?";
         int status = JOptionPane.showOptionDialog(this.parentFrame, text, "Delete", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, null, null);
-        if(status == 1){
+        if(status == 0){
             this.controller.removeHost(this.hostAddrLabel.getText());
         }
     }
 
     private void performEditAction(){ //callback con observer en hostWindow -> updateHosts
-            EditHostDialog dialog = new EditHostDialog(this.parentFrame, this.hostNameLabel.getText(), this.hostAddrLabel.getText());
-            int status = dialog.open();
+        EditHostDialog dialog = new EditHostDialog(this.parentFrame, this.hostNameLabel.getText(), this.hostAddrLabel.getText());
+        int status = dialog.open();
 
-            if(status == 1){
-                controller.editHost(dialog.getHostName(), this.hostAddrLabel.getText(), dialog.getHostAddr());
-            }
+        if(status == 1){
+            controller.editHost(dialog.getHostName(), this.hostAddrLabel.getText(), dialog.getHostAddr());
+        }
     }
 }

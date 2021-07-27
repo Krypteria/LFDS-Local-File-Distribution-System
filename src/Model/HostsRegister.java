@@ -23,6 +23,8 @@ public class HostsRegister implements Observable<HostsObserver>{
         this.hostsMap.put("192.168.1.31", new Host("012345678901234", "192.168.1.31")); 
         this.hostsMap.put("192.168.110.310", new Host("012345", "192.168.110.310")); 
         this.hostsMap.put("10.2.1.1", new Host("01234567890", "10.2.1.1")); 
+        //this.hostsMap.put("10.2.1.2", new Host("afsdfdsa", "10.2.1.2")); 
+        //this.hostsMap.put("10.2.1.3", new Host("afsdfdsa", "10.2.1.3")); */
     }
 
     public void addNewHost(String name, String addr){
