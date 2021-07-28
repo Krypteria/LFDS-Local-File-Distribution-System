@@ -33,7 +33,7 @@ public class MainWindow extends JFrame{
 
         //Setting the layout dimensions
         layout.columnWidths = new int[] {530,300};
-        layout.rowHeights = new int[] {355,300};
+        layout.rowHeights = new int[] {370,300};
         layout.columnWeights = new double[] {1,1};
         layout.rowWeights = new double[] {1,1};
 
@@ -43,11 +43,11 @@ public class MainWindow extends JFrame{
         constraints.insets = new Insets(10,10,10,10);
 
         HostsPanel hostsPanel = new HostsPanel(this.controller, this);
-        FileManagmentPanel fileManagmentPanel = new FileManagmentPanel(this.controller);
+        FileManagmentPanel fileManagmentPanel = new FileManagmentPanel(this.controller, this);
         ServerPanel serverPanel = new ServerPanel(this.controller);
         TransferencesPanel transferencePanel = new TransferencesPanel(this.controller);
 
-        fileManagmentPanel.setBackground(Color.red);
+        fileManagmentPanel.setBackground(null);
         serverPanel.setBackground(Color.green);
         transferencePanel.setBackground(Color.pink);
 

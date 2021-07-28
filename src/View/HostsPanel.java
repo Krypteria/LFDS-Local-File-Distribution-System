@@ -43,7 +43,7 @@ public class HostsPanel extends JPanel implements HostsObserver{
 
     private void initGUI(){        
         this.setLayout(new BorderLayout(5,5));
-        this.setBackground(this.backgroundColor);
+        this.setBackground(null);
         this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createMatteBorder(2,2,2,2, Color.gray),"Hosts"));
 
         this.addHostButton = new JButton("Add new host");
@@ -56,14 +56,16 @@ public class HostsPanel extends JPanel implements HostsObserver{
 
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         buttonsPanel.setBackground(this.backgroundColor);
+        buttonsPanel.setBorder(BorderFactory.createMatteBorder(1,1,1,1, Color.gray));
         buttonsPanel.add(this.addHostButton);
 
         this.hostsContentPanel.setLayout(new BoxLayout(this.hostsContentPanel, BoxLayout.PAGE_AXIS));
+        this.hostsContentPanel.setBorder(BorderFactory.createMatteBorder(1,1,1,1, Color.gray));
         this.hostsContentPanel.setBackground(this.backgroundColor);
 
         this.add(buttonsPanel, BorderLayout.PAGE_START);
         this.add(this.hostsContentPanel, BorderLayout.CENTER);
- 
+
         this.setVisible(true);
     }
     
