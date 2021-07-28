@@ -14,7 +14,6 @@ import javax.swing.JCheckBox;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,8 +22,6 @@ import java.util.ArrayList;
 
 public class HostsPanel extends JPanel implements HostsObserver{
 
-    private final int MAX_WIDTH = 500;
-    private final int MAX_HEIGHT = 265;
     private final Color backgroundColor = Color.white;
 
     private List<JCheckBox> sendCheckBoxesList;
@@ -63,16 +60,6 @@ public class HostsPanel extends JPanel implements HostsObserver{
 
         this.hostsContentPanel.setLayout(new BoxLayout(this.hostsContentPanel, BoxLayout.PAGE_AXIS));
         this.hostsContentPanel.setBackground(this.backgroundColor);
-     
-        //Dimensions
-        this.setPreferredSize(new Dimension(MAX_WIDTH, MAX_HEIGHT));
-        this.setMaximumSize(new Dimension(MAX_WIDTH, MAX_HEIGHT));
-        
-        buttonsPanel.setPreferredSize(new Dimension(MAX_WIDTH,35));
-        buttonsPanel.setMaximumSize(new Dimension(MAX_WIDTH,35));
-
-        this.hostsContentPanel.setPreferredSize(new Dimension(MAX_WIDTH,MAX_HEIGHT));
-        this.hostsContentPanel.setMaximumSize(new Dimension(MAX_WIDTH,MAX_HEIGHT));
 
         this.add(buttonsPanel, BorderLayout.PAGE_START);
         this.add(this.hostsContentPanel, BorderLayout.CENTER);
@@ -96,7 +83,7 @@ public class HostsPanel extends JPanel implements HostsObserver{
 
         JPanel hostControlPanel = new JPanel();
         hostControlPanel.setLayout(new BoxLayout(hostControlPanel, BoxLayout.PAGE_AXIS)); 
-        hostControlPanel.setBackground(Color.red);
+        hostControlPanel.setBackground(this.backgroundColor);
 
         for (Host host : hostList) {
             JCheckBox checkBox = new JCheckBox("Send");

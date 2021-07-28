@@ -19,7 +19,6 @@ import Controller.Controller;
 public class ServerPanel extends JPanel{
     
     private final int MAX_WIDTH = 300;
-    private final int MAX_HEIGHT = 300;
     private final Color backgroundColor = Color.white;
 
     private Controller controller;
@@ -44,31 +43,19 @@ public class ServerPanel extends JPanel{
 
         JPanel statusPanel = new JPanel();
         statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.PAGE_AXIS));
-        statusPanel.setPreferredSize(new Dimension(MAX_WIDTH, 46));
-        statusPanel.setMaximumSize(new Dimension(MAX_WIDTH, 46));
         statusPanel.setBackground(Color.BLUE);
     
 
         JPanel taskPanel = new JPanel(); 
         taskPanel.setLayout(new BoxLayout(taskPanel, BoxLayout.PAGE_AXIS));
-        taskPanel.setPreferredSize(new Dimension(MAX_WIDTH, 20));
-        taskPanel.setMaximumSize(new Dimension(MAX_WIDTH, 20));
         taskPanel.setBackground(Color.RED);
 
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        controlPanel.setPreferredSize(new Dimension(MAX_WIDTH, 35));
-        controlPanel.setMaximumSize(new Dimension(MAX_WIDTH, 35));
         controlPanel.setBackground(Color.GREEN);
 
         //Status panel
         JPanel firstStatusPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JPanel secondStatusPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-        firstStatusPanel.setPreferredSize(new Dimension(MAX_WIDTH, 23));
-        firstStatusPanel.setMaximumSize(new Dimension(MAX_WIDTH, 23));
-
-        secondStatusPanel.setPreferredSize(new Dimension(MAX_WIDTH, 23));
-        secondStatusPanel.setMaximumSize(new Dimension(MAX_WIDTH, 23));
 
         this.serverStatusLabel = new JLabel("");
         this.serverPortLabel = new JLabel("");
@@ -91,14 +78,14 @@ public class ServerPanel extends JPanel{
 
         firstTaskPanel.setBackground(Color.yellow);
         secondTaskPanel.setBackground(Color.orange);
-        
+
         firstTaskPanel.setPreferredSize(new Dimension(MAX_WIDTH, 23));
         firstTaskPanel.setMaximumSize(new Dimension(MAX_WIDTH, 23));
         secondTaskPanel.setPreferredSize(new Dimension(MAX_WIDTH, 40));
         secondTaskPanel.setMaximumSize(new Dimension(MAX_WIDTH, 40));
 
         this.serverTaskTitleLabel = new JLabel("Tasks");
-        this.serverTaskInfoLabel = new JLabel("");
+        this.serverTaskInfoLabel = new JLabel("Aquí iran las cosas estas");
 
         firstTaskPanel.add(this.serverTaskTitleLabel);
         secondTaskPanel.add(this.serverTaskInfoLabel); //Si permito multi recibo lo que haré será meterlo en un jscrollpane
@@ -142,8 +129,6 @@ public class ServerPanel extends JPanel{
 
         this.setBackground(backgroundColor);
         this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createMatteBorder(2,2,2,2, Color.gray),"Server"));
-        this.setPreferredSize(new Dimension(MAX_WIDTH, MAX_HEIGHT));
-        this.setMaximumSize(new Dimension(MAX_WIDTH, MAX_HEIGHT));
         this.setVisible(true);
     }
 
