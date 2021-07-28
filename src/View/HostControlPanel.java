@@ -80,7 +80,7 @@ public class HostControlPanel extends JPanel{
         }
     }
 
-    private void performEditAction(){ //callback con observer en hostWindow -> updateHosts
+    private void performEditAction(){ 
         EditHostDialog dialog = new EditHostDialog(this.parentFrame, this.hostNameLabel.getText(), this.hostAddrLabel.getText());
         int status = dialog.open();
 

@@ -2,10 +2,15 @@ package Model;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Stack;
 
 import Misc.Pair;
+import Model.Exceptions.ServerRunTimeException;
+import Model.Observers.Observable;
+import Model.Observers.ServerObserver;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -15,13 +20,23 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class Server implements Runnable{
+public class Server implements Runnable, Observable<ServerObserver>{
     private final int PORT = 2222;
     private final int BUFFERSIZE = 8192;
     private final String SEPARATOR = "\\";
+    
+    //Status info
+    private final String RUNNING = "Running";
+    private final String STOPPED = "Stopped";
+    
+    //Task info
+    private final String WAITING = "Waiting for transferences";
+    private final String ON_TRANSFER = "Receiving a transference from"; //+<IPsrc>
+    private final String DISABLED = "Disabled, transferences are not allowed";
 
     private final String defaultRoute = "D:\\Biblioteca\\Escritorio\\PruebaRecibo";
 
+    private List<ServerObserver> serverObserversList;
     private ServerSocket serverSocket;
     private byte[] buffer;
 
@@ -38,6 +53,7 @@ public class Server implements Runnable{
         try{
             this.serverSocket = new ServerSocket(this.PORT);
             this.buffer = new byte[this.BUFFERSIZE];
+            this.serverObserversList = new ArrayList<ServerObserver>();
             this.directoryStack = new Stack<Pair<String, Integer>>();
             this.directoryStack.push(new Pair<String, Integer>(this.defaultRoute, 0));
 
@@ -49,10 +65,20 @@ public class Server implements Runnable{
         }
     }
 
-    public void openServer(){
-        new Thread(this).start();
+    public void openServer() throws ServerRunTimeException{
+        try{
+            new Thread(this).start();
+            for(ServerObserver observer : this.serverObserversList){
+                observer.updateStatus(RUNNING, PORT);
+                observer.updateTaskInfo(WAITING);
+            }
+        }catch(IllegalThreadStateException e){
+            throw new ServerRunTimeException("Server is already open");
+        }
     }
 
+    //Implementar un modo de cancelar las transferencias, el servidor enviará a la vista información, si ON_TRANSFER -> lanzo mensaje si no cierro normal
+    
     public void closeServer(){
         //A la hora de finalizarlo lo que haré será esperar a que una transferencia se termine -> dar la opción a cortarla
         if(!this.isAvalaible()){
@@ -63,6 +89,9 @@ public class Server implements Runnable{
         }
 
         this.stop();
+        for(ServerObserver observer : this.serverObserversList){
+            observer.updateStatus(STOPPED, PORT);
+        }
     }
 
     public void resetServer(){
@@ -180,5 +209,15 @@ public class Server implements Runnable{
         }
 
         System.out.println("Salgo del método del servidor");
+    }
+
+    @Override
+    public void addObserver(ServerObserver observer) {
+        this.serverObserversList.add(observer);
+    }
+
+    @Override
+    public void removeObserver(ServerObserver observer) {
+        this.serverObserversList.remove(observer);
     }
 }

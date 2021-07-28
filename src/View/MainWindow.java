@@ -3,7 +3,6 @@ package View;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import java.awt.Insets;
@@ -15,6 +14,9 @@ import java.awt.Dimension;
 import Controller.Controller;
 
 public class MainWindow extends JFrame{
+    private final int MAX_WIDTH = 1000;
+    private final int MAX_HEIGHT = 600;
+
     private Controller controller;
     private JPanel mainPanel;
 
@@ -25,12 +27,21 @@ public class MainWindow extends JFrame{
 
     private void initGUI(){
         this.setTitle("File transfer system");
-        this.setSize(new Dimension(1000,600));
+        this.setSize(new Dimension(MAX_WIDTH, MAX_HEIGHT));
 
-        this.mainPanel = new JPanel(new GridBagLayout());
+        this.mainPanel = new JPanel();
+        GridBagLayout layout = new GridBagLayout();
+
+        //Setting the layout dimensions
+        layout.columnWidths = new int[] {530,300,100,100,100};
+        layout.rowHeights = new int[] {355,300,100,50,100};
+        layout.columnWeights = new double[] {1, 1,1,1,1};
+        layout.rowWeights = new double[] {1,1,1,1,1};
+
+        this.mainPanel.setLayout(layout);
         
         GridBagConstraints constraints = new GridBagConstraints();
-        constraints.insets = new Insets(20,20,20,20);
+        constraints.insets = new Insets(10,10,10,10);
 
         HostsPanel hostsPanel = new HostsPanel(this.controller, this);
         SendPanel sendPanel = new SendPanel(this.controller);
@@ -41,10 +52,8 @@ public class MainWindow extends JFrame{
         serverPanel.setBackground(Color.green);
         transferencePanel.setBackground(Color.pink);
 
-        setJPanelLayoutConfig(hostsPanel, constraints, 0, 1, 4, 4, true);
-        setJPanelLayoutConfig(new JButton("test B"), constraints, 4, 1, 4, 4, true);
-        setJPanelLayoutConfig(new JButton("test C"), constraints, 4, 5, 4, 4, true);
-        setJPanelLayoutConfig(new JButton("test D"), constraints, 4, 9, 4, 4, true);
+        setJPanelLayoutConfig(hostsPanel, constraints, 0, 0, 1, 1, true);
+        setJPanelLayoutConfig(serverPanel, constraints, 1, 1, 1, 1, true);
 
         this.add(mainPanel);
         this.setLocationRelativeTo(null);

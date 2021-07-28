@@ -1,7 +1,5 @@
 package Controller;
 
-import java.util.List;
-
 import Model.Local_distribution_system;
 import Model.Observers.HostsObserver;
 
@@ -16,6 +14,19 @@ public class Controller{
     //Observer methods
     public void addObserver(HostsObserver observer) {
         this.localDistributionSystem.addObserver(observer);  
+    }
+
+    //Server control methods
+    public void openServer(){
+        this.localDistributionSystem.openServer();
+    }
+
+    public void closeServer(){
+        this.localDistributionSystem.closeServer();
+    }   
+
+    public void resetServer(){
+        this.localDistributionSystem.resetServer();
     }
 
     //Other methods
