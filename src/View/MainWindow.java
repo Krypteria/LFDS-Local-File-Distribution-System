@@ -32,7 +32,7 @@ public class MainWindow extends JFrame{
         GridBagLayout layout = new GridBagLayout();
 
         //Setting the layout dimensions
-        layout.columnWidths = new int[] {530,330};
+        layout.columnWidths = new int[] {530,350};
         layout.rowHeights = new int[] {370,300};
         layout.columnWeights = new double[] {1,1};
         layout.rowWeights = new double[] {1,1};
@@ -47,8 +47,6 @@ public class MainWindow extends JFrame{
         ServerPanel serverPanel = new ServerPanel(this.controller);
         TransferencesPanel transferencePanel = new TransferencesPanel(this.controller);
 
-        fileManagmentPanel.setBackground(null);
-        serverPanel.setBackground(Color.green);
         transferencePanel.setBackground(Color.pink);
 
         setJPanelLayoutConfig(hostsPanel, constraints, 0, 0, 1, 1, true);
@@ -76,28 +74,3 @@ public class MainWindow extends JFrame{
         this.mainPanel.add(component, constraints); 
     }
 }
-
-/*
-    JDialog editar y añadir -> JDialog general con todo y que reciba un JBUTTON que sea el que cambie
-    luego en editar y añadir solo llamamos al super y fuera
-
-    Capar numero de caracteres de nombre e IP, capar lo que se mete en IP
-
-    Send panel
-
-    Jfilechooser -> verificar formatos de ficheros y todo el rollo más adelante
-    Ver como hacer que al pulsar en send se añada o elimine dinamicamente un nombre
-    Boton de enviar que inicie el envio
-
-    Server
-
-    Transfer
-
-
-
-
-
-
-
-
-*/

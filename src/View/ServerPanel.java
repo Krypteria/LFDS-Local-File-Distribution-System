@@ -15,11 +15,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import Controller.Controller;
+import Model.Observers.ServerObserver;
 
-public class ServerPanel extends JPanel{
+public class ServerPanel extends JPanel implements ServerObserver{
     
     private final int MAX_WIDTH = 300;
+    
     private final Color backgroundColor = Color.white;
+    private static final float [] greenColor = Color.RGBtoHSB(28, 150, 78, null); 
+	private static final float [] redColor = Color.RGBtoHSB(160, 21, 21, null); 
+
+    private final String RUNNING = "Running";
+    private final String STOPPED = "Stopped";
 
     private Controller controller;
 
@@ -35,6 +42,7 @@ public class ServerPanel extends JPanel{
     
     public ServerPanel(Controller controller){
         this.controller = controller;
+        this.controller.addObserver(this);
         this.initGUI();
     }    
 
@@ -43,28 +51,33 @@ public class ServerPanel extends JPanel{
 
         JPanel statusPanel = new JPanel();
         statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.PAGE_AXIS));
-        statusPanel.setBackground(Color.BLUE);
+        statusPanel.setBorder(BorderFactory.createMatteBorder(1,1,1,1, Color.gray));
+        statusPanel.setBackground(this.backgroundColor);
     
 
-        JPanel taskPanel = new JPanel(); 
-        taskPanel.setLayout(new BoxLayout(taskPanel, BoxLayout.PAGE_AXIS));
-        taskPanel.setBackground(Color.RED);
+        JPanel taskPanel = new JPanel(new BorderLayout(0,6)); 
+        taskPanel.setBorder(BorderFactory.createMatteBorder(1,1,1,1, Color.gray));
+        taskPanel.setBackground(this.backgroundColor);
 
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        controlPanel.setBackground(Color.GREEN);
+        controlPanel.setBorder(BorderFactory.createMatteBorder(1,1,1,1, Color.gray));
+        controlPanel.setBackground(this.backgroundColor);
 
         //Status panel
         JPanel firstStatusPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JPanel secondStatusPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        firstStatusPanel.setBackground(this.backgroundColor);
+        secondStatusPanel.setBackground(this.backgroundColor);
 
-        this.serverStatusLabel = new JLabel("");
-        this.serverPortLabel = new JLabel("");
+        this.serverStatusLabel = new JLabel(RUNNING);
+        this.serverStatusLabel.setForeground(Color.getHSBColor(greenColor[0], greenColor[1], greenColor[2]));
+        this.serverPortLabel = new JLabel("2222");
         
-        firstStatusPanel.add(new JLabel("Status"));
+        firstStatusPanel.add(new JLabel("Status:"));
         firstStatusPanel.add(Box.createRigidArea(new Dimension(10,0)));
         firstStatusPanel.add(this.serverStatusLabel);
         
-        secondStatusPanel.add(new JLabel("Port"));
+        secondStatusPanel.add(new JLabel("Port in use:"));
         secondStatusPanel.add(Box.createRigidArea(new Dimension(10,0)));
         secondStatusPanel.add(this.serverPortLabel);
         
@@ -76,7 +89,7 @@ public class ServerPanel extends JPanel{
         JPanel secondTaskPanel = new JPanel();
         secondTaskPanel.setLayout(new BoxLayout(secondTaskPanel, BoxLayout.PAGE_AXIS));
 
-        firstTaskPanel.setBackground(Color.yellow);
+        firstTaskPanel.setBackground(this.backgroundColor);
         secondTaskPanel.setBackground(Color.orange);
 
         firstTaskPanel.setPreferredSize(new Dimension(MAX_WIDTH, 23));
@@ -90,13 +103,15 @@ public class ServerPanel extends JPanel{
         firstTaskPanel.add(this.serverTaskTitleLabel);
         secondTaskPanel.add(this.serverTaskInfoLabel); //Si permito multi recibo lo que haré será meterlo en un jscrollpane
 
-        taskPanel.add(firstTaskPanel);
-        taskPanel.add(secondTaskPanel);
+        taskPanel.add(firstTaskPanel, BorderLayout.PAGE_START);
+        taskPanel.add(secondTaskPanel, BorderLayout.LINE_START);
 
         //Control Panel
         this.openServerButton = new JButton("Open");
         this.closeServerButton = new JButton("Close");
         this.resetServerButton = new JButton("Reset");
+
+        this.openServerButton.setEnabled(false);
 
         this.openServerButton.addActionListener(new ActionListener(){
             @Override
@@ -127,7 +142,6 @@ public class ServerPanel extends JPanel{
         this.add(taskPanel, BorderLayout.CENTER);
         this.add(controlPanel, BorderLayout.PAGE_END);
 
-        this.setBackground(backgroundColor);
         this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createMatteBorder(2,2,2,2, Color.gray),"Server"));
         this.setVisible(true);
     }
@@ -142,5 +156,27 @@ public class ServerPanel extends JPanel{
 
     private void performResetAction(){
         this.controller.resetServer();
+    }
+
+    @Override
+    public void updateStatus(String newStatus, int newPort) {
+        this.serverStatusLabel.setText(newStatus);
+        this.serverPortLabel.setText("" + newPort);
+
+        if(newStatus.equals(RUNNING)){
+            serverStatusLabel.setForeground(Color.getHSBColor(greenColor[0], greenColor[1], greenColor[2]));
+            this.openServerButton.setEnabled(false);
+            this.closeServerButton.setEnabled(true);
+        }
+        else{
+            serverStatusLabel.setForeground(Color.getHSBColor(redColor[0], redColor[1], redColor[2]));
+            this.openServerButton.setEnabled(true);
+            this.closeServerButton.setEnabled(false);
+        }
+    }
+
+    @Override
+    public void updateTaskInfo(String newTask) {
+        // TODO Auto-generated method stub
     }
 }

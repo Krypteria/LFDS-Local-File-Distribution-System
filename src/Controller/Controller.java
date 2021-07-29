@@ -4,6 +4,7 @@ import java.io.File;
 
 import Model.Local_distribution_system;
 import Model.Observers.HostsObserver;
+import Model.Observers.ServerObserver;
 
 public class Controller{
     
@@ -16,6 +17,10 @@ public class Controller{
     //Observer methods
     public void addObserver(HostsObserver observer) {
         this.localDistributionSystem.addObserver(observer);  
+    }
+
+    public void addObserver(ServerObserver observer) {
+        this.localDistributionSystem.addObserver(observer);
     }
 
     //Server control methods

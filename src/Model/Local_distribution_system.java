@@ -3,6 +3,7 @@ package Model;
 import java.io.File;
 
 import Model.Observers.HostsObserver;
+import Model.Observers.ServerObserver;
 
 
 
@@ -69,5 +70,9 @@ public class Local_distribution_system {
     //Observer methods
     public void addObserver(HostsObserver observer) {
         this.hostsRegister.addObserver(observer);  
+    }
+
+    public void addObserver(ServerObserver observer) {
+        this.server.addObserver(observer);
     }
 }

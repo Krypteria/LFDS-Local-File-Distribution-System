@@ -68,10 +68,7 @@ public class Server implements Runnable, Observable<ServerObserver>{
     public void openServer() throws ServerRunTimeException{
         try{
             new Thread(this).start();
-            for(ServerObserver observer : this.serverObserversList){
-                observer.updateStatus(RUNNING, PORT);
-                observer.updateTaskInfo(WAITING);
-            }
+            this.notifyObservers(RUNNING, PORT, WAITING);
         }catch(IllegalThreadStateException e){
             throw new ServerRunTimeException("Server is already open");
         }
@@ -89,9 +86,7 @@ public class Server implements Runnable, Observable<ServerObserver>{
         }
 
         this.stop();
-        for(ServerObserver observer : this.serverObserversList){
-            observer.updateStatus(STOPPED, PORT);
-        }
+        this.notifyObservers(STOPPED, PORT, DISABLED);
     }
 
     public void resetServer(){
@@ -219,5 +214,12 @@ public class Server implements Runnable, Observable<ServerObserver>{
     @Override
     public void removeObserver(ServerObserver observer) {
         this.serverObserversList.remove(observer);
+    }
+
+    private void notifyObservers(String status, int port, String task){
+        for(ServerObserver observer : this.serverObserversList){
+            observer.updateStatus(status, port);
+            observer.updateTaskInfo(task);
+        }
     }
 }
