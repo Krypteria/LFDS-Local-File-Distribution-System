@@ -22,9 +22,9 @@ public class HostsRegister implements Observable<HostsObserver>{
     private void TEMPORAL(){
         this.hostsMap.put("192.168.1.31", new Host("Nombre 1", "192.168.1.31")); 
         this.hostsMap.put("10.2.1.2", new Host("Nombre 4", "10.2.1.2")); 
-        this.hostsMap.put("192.168.110.310", new Host("Nombre 2", "192.168.110.310")); 
+        this.hostsMap.put("192.168.110.310", new Host("Nombre 2", "1.1.1.1")); 
         this.hostsMap.put("10.2.1.1", new Host("Nombre 3", "10.2.1.1")); 
-        //this.hostsMap.put("10.2.1.3", new Host("afsdfdsa", "10.2.1.3")); */
+        this.hostsMap.put("10.2.1.3", new Host("123456789123456", "192.168.110.310")); 
     }
 
     public void addNewHost(String name, String addr){

@@ -30,8 +30,10 @@ public class HostsPanel extends JPanel implements HostsObserver{
 
     private Controller controller;
     private MainWindow parentFrame;
+    private FileManagmentPanel fileManagmentPanel;
 
-    public HostsPanel(Controller controller, MainWindow parentFrame){
+    public HostsPanel(Controller controller, MainWindow parentFrame, FileManagmentPanel fileManagmentPanel){
+        this.fileManagmentPanel = fileManagmentPanel;
         this.controller = controller;
         this.sendCheckBoxesList = new ArrayList<JCheckBox>();
         this.parentFrame = parentFrame;
@@ -80,6 +82,7 @@ public class HostsPanel extends JPanel implements HostsObserver{
 
     @Override
     public void updateHosts(List<Host> hostList) {
+        this.fileManagmentPanel.removeAllSelectedHosts(); //TEMPORAL
         this.hostsContentPanel.removeAll();
         this.sendCheckBoxesList.clear();
 
@@ -92,7 +95,7 @@ public class HostsPanel extends JPanel implements HostsObserver{
             checkBox.setBackground(this.backgroundColor);
 
             this.sendCheckBoxesList.add(checkBox);
-            hostControlPanel.add(new HostControlPanel(this.controller, this.parentFrame, host, this.sendCheckBoxesList.get(this.sendCheckBoxesList.size() - 1)));
+            hostControlPanel.add(new HostControlPanel(this.controller, this.parentFrame, host, this.sendCheckBoxesList.get(this.sendCheckBoxesList.size() - 1), this.fileManagmentPanel));
         }
         JScrollPane scrollPane = new JScrollPane(hostControlPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());

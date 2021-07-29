@@ -25,8 +25,10 @@ public class HostControlPanel extends JPanel{
 
     private Controller controller;
     private MainWindow parentFrame;
+    private FileManagmentPanel fileManagmentPanel;
 
-    public HostControlPanel(Controller controller, MainWindow parent, Host host, JCheckBox sendBox){
+    public HostControlPanel(Controller controller, MainWindow parent, Host host, JCheckBox sendBox, FileManagmentPanel fileManagmentPanel){
+        this.fileManagmentPanel = fileManagmentPanel;
         this.controller = controller;
         this.sendBox = sendBox;
         this.parentFrame = parent;
@@ -53,6 +55,13 @@ public class HostControlPanel extends JPanel{
             @Override
             public void actionPerformed(ActionEvent e) {
                 performEditAction();
+            }
+        });
+
+        this.sendBox.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                performSelectedAction();
             }
         });
         
@@ -86,6 +95,15 @@ public class HostControlPanel extends JPanel{
 
         if(status == 1){
             controller.editHost(dialog.getHostName(), this.hostAddrLabel.getText(), dialog.getHostAddr());
+        }
+    }
+
+    private void performSelectedAction(){
+        if(this.sendBox.isSelected()){
+            this.fileManagmentPanel.addSelectedHost(this.hostNameLabel.getText(), this.hostAddrLabel.getText());
+        }
+        else{
+            this.fileManagmentPanel.removeSelectedHost(this.hostAddrLabel.getText());
         }
     }
 }

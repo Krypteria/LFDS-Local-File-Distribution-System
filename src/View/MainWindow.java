@@ -13,7 +13,7 @@ import java.awt.Dimension;
 import Controller.Controller;
 
 public class MainWindow extends JFrame{
-    private final int MAX_WIDTH = 800;
+    private final int MAX_WIDTH = 880;
     private final int MAX_HEIGHT = 555;
 
     private Controller controller;
@@ -32,7 +32,7 @@ public class MainWindow extends JFrame{
         GridBagLayout layout = new GridBagLayout();
 
         //Setting the layout dimensions
-        layout.columnWidths = new int[] {530,300};
+        layout.columnWidths = new int[] {530,330};
         layout.rowHeights = new int[] {370,300};
         layout.columnWeights = new double[] {1,1};
         layout.rowWeights = new double[] {1,1};
@@ -42,8 +42,8 @@ public class MainWindow extends JFrame{
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.insets = new Insets(10,10,10,10);
 
-        HostsPanel hostsPanel = new HostsPanel(this.controller, this);
         FileManagmentPanel fileManagmentPanel = new FileManagmentPanel(this.controller, this);
+        HostsPanel hostsPanel = new HostsPanel(this.controller, this, fileManagmentPanel);
         ServerPanel serverPanel = new ServerPanel(this.controller);
         TransferencesPanel transferencePanel = new TransferencesPanel(this.controller);
 

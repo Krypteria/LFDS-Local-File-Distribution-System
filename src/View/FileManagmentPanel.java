@@ -7,7 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
 
 import Controller.Controller;
 
@@ -18,6 +18,8 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FileManagmentPanel extends JPanel{
 
@@ -34,8 +36,11 @@ public class FileManagmentPanel extends JPanel{
     private JButton selectFileButton;
     private JLabel selectedFileLabel;
     private JPanel secondReceiversPanel;
+
+    private HashMap<String, String> selectedHostMap;
     
     public FileManagmentPanel(Controller controller, MainWindow parent){
+        this.selectedHostMap = new HashMap<String, String>();
         this.controller = controller;
         this.parent = parent;
         this.initGUI();
@@ -64,10 +69,11 @@ public class FileManagmentPanel extends JPanel{
         JPanel fileSelectorPanel = new JPanel();
         fileSelectorPanel.setLayout(new BoxLayout(fileSelectorPanel, BoxLayout.PAGE_AXIS));
         fileSelectorPanel.setBorder(BorderFactory.createMatteBorder(1,1,1,1, Color.gray));
-
+        
         JPanel firstSelectorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JPanel secondSelectorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         firstSelectorPanel.setBackground(this.backgroundColor);
+        
+        JPanel secondSelectorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         secondSelectorPanel.setBackground(this.backgroundColor);
         
         firstSelectorPanel.add(new JLabel("File:"));
@@ -81,22 +87,21 @@ public class FileManagmentPanel extends JPanel{
         fileSelectorPanel.add(secondSelectorPanel);
 
         //Receiver
-        JPanel receiversPanel = new JPanel();
-        receiversPanel.setLayout(new BoxLayout(receiversPanel, BoxLayout.PAGE_AXIS));
-        receiversPanel.setPreferredSize(new Dimension(MAX_WIDTH, 50));
-        receiversPanel.setMaximumSize(new Dimension(MAX_WIDTH, 50));
+        JPanel receiversPanel = new JPanel(new BorderLayout(0,5));
+        receiversPanel.setBackground(this.backgroundColor);
         receiversPanel.setBorder(BorderFactory.createMatteBorder(1,1,1,1, Color.gray));
 
         JPanel firstReceiversPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        this.secondReceiversPanel = new JPanel();
-        this.secondReceiversPanel.setLayout(new BoxLayout(this.secondReceiversPanel, BoxLayout.PAGE_AXIS));
+        firstReceiversPanel.setMaximumSize(new Dimension(MAX_WIDTH, 30));
         firstReceiversPanel.setBackground(this.backgroundColor);
+
+        this.secondReceiversPanel = new JPanel(new BorderLayout());
         this.secondReceiversPanel.setBackground(this.backgroundColor);
 
         firstReceiversPanel.add(new JLabel("Receivers"));
 
-        receiversPanel.add(firstReceiversPanel);
-        receiversPanel.add(this.secondReceiversPanel);
+        receiversPanel.add(firstReceiversPanel, BorderLayout.PAGE_START);
+        receiversPanel.add(this.secondReceiversPanel, BorderLayout.CENTER);
 
         //Send button
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -114,12 +119,65 @@ public class FileManagmentPanel extends JPanel{
         int status = this.fileChooser.showOpenDialog(this.parent);
         if(status == 0){ //
             File selectedFile = this.fileChooser.getSelectedFile();
-            if(selectedFile.getName().length() > 22){
-                this.selectedFileLabel.setText(selectedFile.getName().substring(0, 22) + "...");
+            if(selectedFile.getName().length() > 30){
+                this.selectedFileLabel.setText(selectedFile.getName().substring(0, 30) + "...");
             }
             else{
                 this.selectedFileLabel.setText(selectedFile.getName());
             }
         }
+    }
+
+    public void addSelectedHost(String name, String address){
+        this.selectedHostMap.put(address, name);
+        this.updateHostsReceivers(); 
+    }
+
+    public void removeSelectedHost(String address){
+        this.selectedHostMap.remove(address);
+        this.updateHostsReceivers(); 
+    }
+
+    public void removeAllSelectedHosts(){
+        this.selectedHostMap.clear();
+        this.updateHostsReceivers();
+    }
+
+    private void updateHostsReceivers(){
+        this.secondReceiversPanel.removeAll();
+
+        JPanel secondReceiversContentPanel = new JPanel();
+        secondReceiversContentPanel.setLayout(new BoxLayout(secondReceiversContentPanel, BoxLayout.PAGE_AXIS)); 
+        secondReceiversContentPanel.setBackground(this.backgroundColor);
+
+        for(Map.Entry<String, String> mapElement : this.selectedHostMap.entrySet()) {
+            JPanel selectedHostPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            selectedHostPanel.setMaximumSize(new Dimension(MAX_WIDTH, 28));
+            selectedHostPanel.setPreferredSize(new Dimension(MAX_WIDTH, 28));
+            selectedHostPanel.setBackground(this.backgroundColor);
+            selectedHostPanel.setVisible(true);
+
+            String address = mapElement.getKey();
+            String name = mapElement.getValue();
+
+            JLabel nameLabel = new JLabel(name);
+            JLabel addrLabel = new JLabel(address);
+            nameLabel.setPreferredSize(new Dimension(120,25));
+            addrLabel.setPreferredSize(new Dimension(100,25));
+
+            selectedHostPanel.add(new JLabel("[*]"));
+            selectedHostPanel.add(Box.createRigidArea(new Dimension(1,0)));
+            selectedHostPanel.add(nameLabel);
+            selectedHostPanel.add(Box.createRigidArea(new Dimension(1,0)));
+            selectedHostPanel.add(addrLabel);
+
+            secondReceiversContentPanel.add(selectedHostPanel);
+        }
+        JScrollPane scrollPane = new JScrollPane(secondReceiversContentPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        
+        this.secondReceiversPanel.add(scrollPane, BorderLayout.LINE_START);
+        this.secondReceiversPanel.validate();
+        this.secondReceiversPanel.repaint();
     }
 }
