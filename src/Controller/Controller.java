@@ -1,5 +1,7 @@
 package Controller;
 
+import java.io.File;
+
 import Model.Local_distribution_system;
 import Model.Observers.HostsObserver;
 
@@ -27,6 +29,11 @@ public class Controller{
 
     public void resetServer(){
         this.localDistributionSystem.resetServer();
+    }
+
+    //Networking methods
+    public void sendFile(String dst_addr, File file){
+        this.localDistributionSystem.sendFile(dst_addr, file);
     }
 
     //Other methods

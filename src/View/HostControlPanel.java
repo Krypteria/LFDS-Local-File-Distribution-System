@@ -100,9 +100,13 @@ public class HostControlPanel extends JPanel{
 
     private void performSelectedAction(){
         if(this.sendBox.isSelected()){
+            this.editHostButton.setEnabled(false);
+            this.deleteHostButton.setEnabled(false);
             this.fileManagmentPanel.addSelectedHost(this.hostNameLabel.getText(), this.hostAddrLabel.getText());
         }
         else{
+            this.editHostButton.setEnabled(true);
+            this.deleteHostButton.setEnabled(true);
             this.fileManagmentPanel.removeSelectedHost(this.hostAddrLabel.getText());
         }
     }

@@ -30,6 +30,7 @@ public class FileManagmentPanel extends JPanel{
 
     private Controller controller;
     private MainWindow parent;
+    private File selectedFile;
     
     private JFileChooser fileChooser;
     private JButton sendButton;
@@ -41,6 +42,7 @@ public class FileManagmentPanel extends JPanel{
     
     public FileManagmentPanel(Controller controller, MainWindow parent){
         this.selectedHostMap = new HashMap<String, String>();
+        this.selectedFile = null;
         this.controller = controller;
         this.parent = parent;
         this.initGUI();
@@ -62,8 +64,15 @@ public class FileManagmentPanel extends JPanel{
             }
         });
        
-        this.selectedFileLabel = new JLabel(NOT_FILE);
         this.sendButton = new JButton("Send");
+        this.sendButton.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                performSendAction();     
+            }
+        });
+
+        this.selectedFileLabel = new JLabel(NOT_FILE);
 
         //Selector
         JPanel fileSelectorPanel = new JPanel();
@@ -118,13 +127,32 @@ public class FileManagmentPanel extends JPanel{
     private void performSelectFileAction(){
         int status = this.fileChooser.showOpenDialog(this.parent);
         if(status == 0){ //
-            File selectedFile = this.fileChooser.getSelectedFile();
+            this.selectedFile = this.fileChooser.getSelectedFile();
             if(selectedFile.getName().length() > 30){
                 this.selectedFileLabel.setText(selectedFile.getName().substring(0, 30) + "...");
             }
             else{
                 this.selectedFileLabel.setText(selectedFile.getName());
             }
+        }
+    }
+
+    private void performSendAction(){
+        if(!this.selectedHostMap.isEmpty()){
+            if(this.selectedFile != null){
+                for(Map.Entry<String, String> mapElement : this.selectedHostMap.entrySet()) {
+                    String address = mapElement.getKey();
+                    System.out.println("Enviando a: " + address);
+                    
+                    this.controller.sendFile(address, this.selectedFile);
+                }
+            }
+            else{
+                System.out.println("Fichero invalido");
+            }
+        }
+        else{
+            System.out.println("Ningun destinatario seleccionado");
         }
     }
 

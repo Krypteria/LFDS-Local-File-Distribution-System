@@ -21,10 +21,10 @@ public class HostsRegister implements Observable<HostsObserver>{
     //Temporal hasta que defina el sistema de serializacion, la primera carga sería del tirón, no updateando cada vez
     private void TEMPORAL(){
         this.hostsMap.put("192.168.1.31", new Host("Nombre 1", "192.168.1.31")); 
-        this.hostsMap.put("10.2.1.2", new Host("Nombre 4", "10.2.1.2")); 
-        this.hostsMap.put("192.168.110.310", new Host("Nombre 2", "1.1.1.1")); 
+        this.hostsMap.put("0.0.0.0", new Host("Localhost", "0.0.0.0")); 
+        this.hostsMap.put("1.1.1.1", new Host("Nombre 2", "1.1.1.1")); 
         this.hostsMap.put("10.2.1.1", new Host("Nombre 3", "10.2.1.1")); 
-        this.hostsMap.put("10.2.1.3", new Host("123456789123456", "192.168.110.310")); 
+        this.hostsMap.put("192.168.110.310", new Host("123456789123456", "192.168.110.310")); 
     }
 
     public void addNewHost(String name, String addr){
@@ -49,7 +49,7 @@ public class HostsRegister implements Observable<HostsObserver>{
 
     public void updateGUIHosts(){
         for(HostsObserver observer : this.hostsObserverList){
-            observer.updateHosts(Collections.unmodifiableList(new ArrayList<Host>(this.hostsMap.values())));
+            observer.updateAllHosts(Collections.unmodifiableList(new ArrayList<Host>(this.hostsMap.values())));
         }
     } 
 

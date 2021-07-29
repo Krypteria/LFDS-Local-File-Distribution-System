@@ -13,7 +13,7 @@ public class Local_distribution_system {
     public Local_distribution_system(){
         this.hostsRegister = new HostsRegister();
         this.server = new Server();
-        //this.openServer();
+        this.openServer();
     }
 
     //Server methods
@@ -44,8 +44,8 @@ public class Local_distribution_system {
     }
 
     //Networking methods
-    public void sendFile(String addr_dst, File file){
-        Client client = new Client(addr_dst, file);
+    public void sendFile(String dst_addr, File file){
+        Client client = new Client(dst_addr, file);
         new Thread(client).start();
     }
 

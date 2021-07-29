@@ -23,11 +23,10 @@ import java.util.ArrayList;
 public class HostsPanel extends JPanel implements HostsObserver{
 
     private final Color backgroundColor = Color.white;
-
-    private List<JCheckBox> sendCheckBoxesList;
-    private JPanel hostsContentPanel;
     private JButton addHostButton;
 
+    private JPanel hostsContentPanel;
+    
     private Controller controller;
     private MainWindow parentFrame;
     private FileManagmentPanel fileManagmentPanel;
@@ -35,7 +34,6 @@ public class HostsPanel extends JPanel implements HostsObserver{
     public HostsPanel(Controller controller, MainWindow parentFrame, FileManagmentPanel fileManagmentPanel){
         this.fileManagmentPanel = fileManagmentPanel;
         this.controller = controller;
-        this.sendCheckBoxesList = new ArrayList<JCheckBox>();
         this.parentFrame = parentFrame;
         this.hostsContentPanel = new JPanel();
         
@@ -81,10 +79,8 @@ public class HostsPanel extends JPanel implements HostsObserver{
     }
 
     @Override
-    public void updateHosts(List<Host> hostList) {
-        this.fileManagmentPanel.removeAllSelectedHosts(); //TEMPORAL
+    public void updateAllHosts(List<Host> hostList) {
         this.hostsContentPanel.removeAll();
-        this.sendCheckBoxesList.clear();
 
         JPanel hostControlPanel = new JPanel();
         hostControlPanel.setLayout(new BoxLayout(hostControlPanel, BoxLayout.PAGE_AXIS)); 
@@ -94,8 +90,7 @@ public class HostsPanel extends JPanel implements HostsObserver{
             JCheckBox checkBox = new JCheckBox("Send");
             checkBox.setBackground(this.backgroundColor);
 
-            this.sendCheckBoxesList.add(checkBox);
-            hostControlPanel.add(new HostControlPanel(this.controller, this.parentFrame, host, this.sendCheckBoxesList.get(this.sendCheckBoxesList.size() - 1), this.fileManagmentPanel));
+            hostControlPanel.add(new HostControlPanel(this.controller, this.parentFrame, host, checkBox, this.fileManagmentPanel));
         }
         JScrollPane scrollPane = new JScrollPane(hostControlPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
