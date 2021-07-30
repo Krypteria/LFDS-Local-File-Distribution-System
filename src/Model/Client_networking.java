@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Misc.Pair;
+import Model.Observers.Observable;
+import Model.Observers.TransferenceObservable;
+import Model.Observers.TransferencesObserver;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -17,11 +20,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-public class Client_networking{
+public class Client_networking implements TransferenceObservable<TransferencesObserver>{
 
     private final int PORT = 2222;
     private final int BUFFERSIZE = 8192;
 
+    private List<TransferencesObserver> transferenceObserversList;
     private Socket clientSocket;
     private byte[] buffer;
 
@@ -29,10 +33,12 @@ public class Client_networking{
     private DataInputStream input;
     private List<Pair<String, Integer>> filePaths;
 
+
     public Client_networking(String addr_dst){
         try{
             this.clientSocket = new Socket();
             this.clientSocket.connect(new InetSocketAddress(addr_dst, this.PORT));
+            this.transferenceObserversList = new ArrayList<TransferencesObserver>();
             this.buffer = new byte[this.BUFFERSIZE];
             this.filePaths = new ArrayList<Pair<String, Integer>>();
         }
@@ -124,4 +130,15 @@ public class Client_networking{
             System.out.println("Error al enviar el fichero");
         }
     }
+
+   //Transference Observer methods
+   @Override
+   public void addTransferenceObserver(TransferencesObserver observer) {
+       this.transferenceObserversList.add(observer);
+   }
+
+   @Override
+   public void removeTransferenceObserver(TransferencesObserver observer) {
+       this.transferenceObserversList.remove(observer);
+   }
 }

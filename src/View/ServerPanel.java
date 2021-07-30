@@ -4,6 +4,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.BorderFactory;
 
@@ -15,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import Controller.Controller;
+import Model.Exceptions.ServerRunTimeException;
 import Model.Observers.ServerObserver;
 
 public class ServerPanel extends JPanel implements ServerObserver{
@@ -29,6 +31,7 @@ public class ServerPanel extends JPanel implements ServerObserver{
     private final String STOPPED = "Stopped";
 
     private Controller controller;
+    private MainWindow parent;
 
     private JButton openServerButton;
     private JButton closeServerButton;
@@ -40,7 +43,8 @@ public class ServerPanel extends JPanel implements ServerObserver{
     private JLabel serverTaskTitleLabel;
     private JLabel serverTaskInfoLabel;
     
-    public ServerPanel(Controller controller){
+    public ServerPanel(Controller controller, MainWindow parent){
+        this.parent = parent;
         this.controller = controller;
         this.controller.addObserver(this);
         this.initGUI();
@@ -147,31 +151,53 @@ public class ServerPanel extends JPanel implements ServerObserver{
     }
 
     private void performOpenAction(){
-        this.controller.openServer();
+        try{
+            this.controller.openServer();
+        }
+        catch(ServerRunTimeException e){
+            JOptionPane.showOptionDialog(this.parent, e.getMessage(), "Error", JOptionPane.PLAIN_MESSAGE, JOptionPane.WARNING_MESSAGE, null, null, null);
+        }
     }
 
     private void performCloseAction(){
-        this.controller.closeServer();
+        try{
+            this.controller.closeServer();
+        }
+        catch(ServerRunTimeException e){
+            JOptionPane.showOptionDialog(this.parent, e.getMessage(), "Error", JOptionPane.PLAIN_MESSAGE, JOptionPane.WARNING_MESSAGE, null, null, null);            
+        }
     }
 
     private void performResetAction(){
-        this.controller.resetServer();
+        updateStatus(STOPPED, Integer.parseInt(serverPortLabel.getText()));
+        new Thread() {
+            public void run() {
+                try{
+                    controller.resetServer();
+                }
+                catch(ServerRunTimeException e){
+                    JOptionPane.showOptionDialog(parent, e.getMessage(), "Error", JOptionPane.PLAIN_MESSAGE, JOptionPane.WARNING_MESSAGE, null, null, null);
+                }
+            }
+        }.start();
     }
 
     @Override
     public void updateStatus(String newStatus, int newPort) {
         this.serverStatusLabel.setText(newStatus);
         this.serverPortLabel.setText("" + newPort);
-
+      
         if(newStatus.equals(RUNNING)){
             serverStatusLabel.setForeground(Color.getHSBColor(greenColor[0], greenColor[1], greenColor[2]));
             this.openServerButton.setEnabled(false);
             this.closeServerButton.setEnabled(true);
+            this.resetServerButton.setEnabled(true);
         }
-        else{
+        else if(newStatus.equals(STOPPED)){
             serverStatusLabel.setForeground(Color.getHSBColor(redColor[0], redColor[1], redColor[2]));
             this.openServerButton.setEnabled(true);
             this.closeServerButton.setEnabled(false);
+            this.resetServerButton.setEnabled(false);
         }
     }
 

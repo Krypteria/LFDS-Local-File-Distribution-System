@@ -3,6 +3,7 @@ package Controller;
 import java.io.File;
 
 import Model.Local_distribution_system;
+import Model.Exceptions.ServerRunTimeException;
 import Model.Observers.HostsObserver;
 import Model.Observers.ServerObserver;
 
@@ -24,15 +25,15 @@ public class Controller{
     }
 
     //Server control methods
-    public void openServer(){
+    public void openServer() throws ServerRunTimeException{
         this.localDistributionSystem.openServer();
     }
 
-    public void closeServer(){
+    public void closeServer() throws ServerRunTimeException{
         this.localDistributionSystem.closeServer();
     }   
 
-    public void resetServer(){
+    public void resetServer() throws ServerRunTimeException{
         this.localDistributionSystem.resetServer();
     }
 

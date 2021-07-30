@@ -11,16 +11,19 @@ import Misc.Pair;
 import Model.Exceptions.ServerRunTimeException;
 import Model.Observers.Observable;
 import Model.Observers.ServerObserver;
+import Model.Observers.TransferenceObservable;
+import Model.Observers.TransferencesObserver;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class Server implements Runnable, Observable<ServerObserver>{
+public class Server implements Runnable, Observable<ServerObserver>, TransferenceObservable<TransferencesObserver>{
     private final int PORT = 2222;
     private final int BUFFERSIZE = 8192;
     private final String SEPARATOR = "\\";
@@ -37,6 +40,8 @@ public class Server implements Runnable, Observable<ServerObserver>{
     private final String defaultRoute = "D:\\Biblioteca\\Escritorio\\PruebaRecibo";
 
     private List<ServerObserver> serverObserversList;
+    private List<TransferencesObserver> transferenceObserversList;
+
     private ServerSocket serverSocket;
     private byte[] buffer;
 
@@ -49,117 +54,101 @@ public class Server implements Runnable, Observable<ServerObserver>{
     private boolean endServerActivity;
 
     public Server(){
-        System.out.println("Servidor iniciandose");
         try{
             this.serverSocket = new ServerSocket(this.PORT);
             this.buffer = new byte[this.BUFFERSIZE];
             this.serverObserversList = new ArrayList<ServerObserver>();
+            this.transferenceObserversList = new ArrayList<TransferencesObserver>();
             this.directoryStack = new Stack<Pair<String, Integer>>();
             this.directoryStack.push(new Pair<String, Integer>(this.defaultRoute, 0));
 
             this.avalaible = true;
             this.endServerActivity = false;
         }
-        catch(IOException e){
-            System.out.println("Error al crear el socket del servidor");
+        catch(IOException e){ //esta excepcion va a estar dificil ver como mostrarla por pantalla
+            throw new ServerRunTimeException("Error during server socket opening");
         }
     }
 
-    public void openServer() throws ServerRunTimeException{
-        try{
-            new Thread(this).start();
-            this.notifyObservers(RUNNING, PORT, WAITING);
-        }catch(IllegalThreadStateException e){
-            throw new ServerRunTimeException("Server is already open");
+    //Server control methods
+    public void openServer(){
+        new Thread(this).start();
+        this.notifyObservers(RUNNING, PORT, WAITING);
+    }
+
+    public void closeServer() throws ServerRunTimeException{ 
+        if(this.avalaible){
+            try {
+                this.serverSocket.close();;
+                this.endServerActivity = true;
+                this.notifyObservers(STOPPED, PORT, DISABLED);
+            } catch (IOException e) {
+                throw new ServerRunTimeException("Error during stop operation");
+            }
+        }
+        else{
+            throw new ServerRunTimeException("The server cannot be shut down as it is performing operations, try when it is done");
         }
     }
 
-    //Implementar un modo de cancelar las transferencias, el servidor enviará a la vista información, si ON_TRANSFER -> lanzo mensaje si no cierro normal
-    
-    public void closeServer(){
-        //A la hora de finalizarlo lo que haré será esperar a que una transferencia se termine -> dar la opción a cortarla
-        if(!this.isAvalaible()){
-            //Lanzaría un jdialog con la pregunta
-            System.out.println("El servidor está activo actualmente, se cerrará cuando se termine la transferencia");
-
-            //Podemos intentar cerrar el socket y que el cliente reciba una excepción controlada indicando el suceso
-        }
-
-        this.stop();
-        this.notifyObservers(STOPPED, PORT, DISABLED);
-    }
-
-    public void resetServer(){
+    public void resetServer() throws ServerRunTimeException{
         this.closeServer();
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            throw new ServerRunTimeException("Error during reset wait operation");
+        }
         this.openServer();
     }
-
-    private boolean isAvalaible(){
-        return this.avalaible;
-    }
-
-    private void stop(){
-        this.endServerActivity = true;
-    }
-
-    private void clearDirectoryStack(){
-        this.directoryStack.clear();
-        this.directoryStack.push(new Pair<String, Integer>(this.defaultRoute, 0));
-    }
-
+    
+    //Transference methods
     @Override
-    public void run(){
-        System.out.println("Ejecutando método run");
+    public void run() throws ServerRunTimeException{
         while(!this.endServerActivity){
             try{
-                System.out.println("Esperando");
                 Socket clientSocket = this.serverSocket.accept();
-                System.out.println("Fin espera");
                 this.processClientTransference(clientSocket);
             }
             catch(IOException e){
-                System.out.println("Error al establecer la conexión entre cliente y servidor");
+                throw new ServerRunTimeException("Error waiting for connections");
             }
         }
     }
 
-    private void processClientTransference(Socket clientSocket){
+    private void processClientTransference(Socket clientSocket) throws ServerRunTimeException{
         this.avalaible = false;
         this.processHeader(clientSocket, this.receiveHeader(clientSocket));
-        this.avalaible = true;
+        this.avalaible = true; //ESTO SOLO FUNCIONARÍA CON UN SOLO ENVIO A LA VEZ
     }
 
-    private String receiveHeader(Socket clientSocket){
+    private String receiveHeader(Socket clientSocket) throws ServerRunTimeException{
         String header = "";
         try {
             this.input = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
             header = this.input.readUTF();
-
-            System.out.println("[*] HEADER: ");
-            System.out.println(header);
         } catch (IOException e) {
-            System.out.println("Error al recibir el header");
+            throw new ServerRunTimeException("Error while receiving header");
         }
         
         return header;
     }
 
-    private void processHeader(Socket clientSocket, String header){
+    private void processHeader(Socket clientSocket, String header) throws ServerRunTimeException{
         Scanner headerInfo = new Scanner(header);
         while(headerInfo.hasNextLine()){
-            //Obtengo la información referente al siguiente fichero
+            
             String fileInfo = headerInfo.nextLine();
             String fileName = fileInfo.substring(fileInfo.lastIndexOf(":") + 1, fileInfo.length());
             String filePath = this.directoryStack.peek().getFirst() + SEPARATOR + fileName;
             int deepness = Character.getNumericValue(fileInfo.charAt(2));
             int fileSize = Integer.parseInt(fileInfo.substring(4, fileInfo.lastIndexOf(":")));
 
-            if(fileInfo.charAt(0) == 'D'){
+            if(fileInfo.charAt(0) == 'D'){ //Directory
                 new File(filePath).mkdir();
                 this.directoryStack.push(new Pair<String, Integer>(filePath,deepness));
             }
-            else if(fileInfo.charAt(0) == 'F'){
-                //Para que un fichero pertenezca a un directorio, tiene que tener más profundidad que este
+            else if(fileInfo.charAt(0) == 'F'){ //File
+                //If the file deepness is <= actual directory deepness it means that the file is from another directory with less deepness
                 while(!this.directoryStack.isEmpty() && this.directoryStack.peek().getSecond() >= deepness){
                     this.directoryStack.pop();
                     filePath = this.directoryStack.peek().getFirst() + SEPARATOR + fileName;
@@ -167,23 +156,20 @@ public class Server implements Runnable, Observable<ServerObserver>{
                 this.receiveFile(clientSocket, filePath, fileSize);
             }
         }
+        headerInfo.close();
+        this.clearDirectoryStack();
 
-        //Cerramos conexiones
         try {
             this.output.close();
             this.input.close();
             clientSocket.close();
         } catch (IOException e) {
-            System.out.println("Error al cerrar conexiones en el servidor");
-        }
-     
-        headerInfo.close();
-        this.clearDirectoryStack();
+           throw new ServerRunTimeException("Error while closing client socket");
+        }  
     }
 
-    private void receiveFile(Socket clientSocket, String filePath, int fileSize){
+    private void receiveFile(Socket clientSocket, String filePath, int fileSize) throws ServerRunTimeException{
         try{
-            System.out.println(filePath);
             this.output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(filePath))));
 
             int bytesReaded;
@@ -193,19 +179,21 @@ public class Server implements Runnable, Observable<ServerObserver>{
                 fileSize -= bytesReaded;
                 System.out.println("Recibiendo " + bytesReaded + " bytes");
             }
-    
-            System.out.println("Archivo recibido correctamente");
+        }
+        catch(FileNotFoundException e){
+            throw new ServerRunTimeException("Error, file not found");
         }
         catch(IOException e){
-            System.out.println("Error al ejecutar la transferencia por parte del servidor");
+            throw new ServerRunTimeException("Error during file processing");
         }
-        catch(Exception e){
-            System.out.println("Algo raro ha pasado");
-        }
-
-        System.out.println("Salgo del método del servidor");
     }
 
+    private void clearDirectoryStack(){
+        this.directoryStack.clear();
+        this.directoryStack.push(new Pair<String, Integer>(this.defaultRoute, 0));
+    }
+
+    //Server Observer methods
     @Override
     public void addObserver(ServerObserver observer) {
         this.serverObserversList.add(observer);
@@ -221,5 +209,16 @@ public class Server implements Runnable, Observable<ServerObserver>{
             observer.updateStatus(status, port);
             observer.updateTaskInfo(task);
         }
+    }
+
+    //Transference Observer methods
+    @Override
+    public void addTransferenceObserver(TransferencesObserver observer) {
+        this.transferenceObserversList.add(observer);
+    }
+
+    @Override
+    public void removeTransferenceObserver(TransferencesObserver observer) {
+        this.transferenceObserversList.remove(observer);
     }
 }

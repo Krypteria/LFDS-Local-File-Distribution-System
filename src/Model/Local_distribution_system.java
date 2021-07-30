@@ -2,9 +2,10 @@ package Model;
 
 import java.io.File;
 
+import Model.Exceptions.ServerRunTimeException;
 import Model.Observers.HostsObserver;
 import Model.Observers.ServerObserver;
-
+import Model.Observers.TransferencesObserver;
 
 
 public class Local_distribution_system {
@@ -18,17 +19,16 @@ public class Local_distribution_system {
     }
 
     //Server methods
-    public void openServer(){
+    public void openServer() throws ServerRunTimeException{
         this.server.openServer();
     }
     
-    public void closeServer(){
+    public void closeServer() throws ServerRunTimeException{
         this.server.closeServer();
     }
 
-    public void resetServer(){
-        this.closeServer();
-        this.openServer();
+    public void resetServer() throws ServerRunTimeException{
+        this.server.resetServer();
     }
 
     //Hosts methods
@@ -75,4 +75,20 @@ public class Local_distribution_system {
     public void addObserver(ServerObserver observer) {
         this.server.addObserver(observer);
     }
+  
+    public void addTransferenceObserverServer(TransferencesObserver observer) {
+        this.server.addTransferenceObserver(observer);
+    }
+
+    public void removeTransferenceObserverServer(TransferencesObserver observer) {
+        this.server.removeTransferenceObserver(observer);
+    }   
+    
+    /*public void addTransferenceObserverClient(TransferencesObserver observer) {
+        this.server.addTransferenceObserver(observer);
+    }
+
+    public void removeTransferenceObserverClient(TransferencesObserver observer) {
+        this.server.removeTransferenceObserver(observer);
+    } */
 }
