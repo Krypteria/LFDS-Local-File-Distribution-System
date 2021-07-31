@@ -8,11 +8,11 @@ import java.util.List;
 import Model.Observers.HostsObserver;
 import Model.Observers.Observable;
 
-public class HostsRegister implements Observable<HostsObserver>{
+public class HostsManager implements Observable<HostsObserver>{
     private HashMap<String, Host> hostsMap;
     private List<HostsObserver> hostsObserverList;
 
-    public HostsRegister(){
+    public HostsManager(){
         this.hostsMap = new HashMap<>();    
         this.hostsObserverList = new ArrayList<HostsObserver>();
         this.TEMPORAL();
@@ -59,8 +59,4 @@ public class HostsRegister implements Observable<HostsObserver>{
         this.updateGUIHosts();
     }
 
-    @Override
-    public void removeObserver(HostsObserver observer) {
-        this.hostsObserverList.remove(observer);
-    }
 }

@@ -142,8 +142,8 @@ public class FileManagmentPanel extends JPanel{
             if(this.selectedFile != null){
                 for(Map.Entry<String, String> mapElement : this.selectedHostMap.entrySet()) {
                     String address = mapElement.getKey();
-                    System.out.println("Enviando a: " + address);
-                    
+                    this.selectedFileLabel.setText("");
+                    this.removeAllSelectedHosts();                       
                     this.controller.sendFile(address, this.selectedFile);
                 }
             }

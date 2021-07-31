@@ -1,13 +1,14 @@
-package Model;
+package Model.Client;
 
 import java.net.Socket;
+import java.net.Inet4Address;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import Misc.Pair;
-import Model.Observers.Observable;
 import Model.Observers.TransferenceObservable;
 import Model.Observers.TransferencesObserver;
 
@@ -25,22 +26,33 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
     private final int PORT = 2222;
     private final int BUFFERSIZE = 8192;
 
+    private final String SEND_MODE = "send";
+
     private List<TransferencesObserver> transferenceObserversList;
     private Socket clientSocket;
     private byte[] buffer;
 
     private DataOutputStream output;
     private DataInputStream input;
-    private List<Pair<String, Integer>> filePaths;
+    private List<Pair<String, Long>> filePaths;
+
+    private String src_addr;
+    private String dst_addr;
+    private long totalFileSize;
 
 
-    public Client_networking(String addr_dst){
+    public Client_networking(String dst_addr){
         try{
+            this.src_addr = "198.100.200.204"; //VER SI FUNCIONA BIEN
+            System.out.println(src_addr); 
+            this.dst_addr = dst_addr;
+            this.totalFileSize = 0;
+
             this.clientSocket = new Socket();
-            this.clientSocket.connect(new InetSocketAddress(addr_dst, this.PORT));
+            this.clientSocket.connect(new InetSocketAddress(dst_addr, this.PORT));
             this.transferenceObserversList = new ArrayList<TransferencesObserver>();
             this.buffer = new byte[this.BUFFERSIZE];
-            this.filePaths = new ArrayList<Pair<String, Integer>>();
+            this.filePaths = new ArrayList<Pair<String, Long>>();
         }
         catch(UnknownHostException e){
             System.out.println("La IP destino no es válida");
@@ -51,14 +63,16 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
     }
 
     public void send(File file){
+        this.notifyAddToTransferenceObservers(file);
         if(file.isDirectory()){
             this.sendHeader(this.getDirectoryHeader(file, 1));
             sendFiles(file);
         }
         else{
             this.sendHeader(this.getFileHeader(file, 1));
-            sendFile(file, Integer.parseInt("" + file.length()));
+            sendFile(file, file.length());
         }
+        this.notifyRemoveToTransferenceObservers();
 
         try{
             this.input.close();
@@ -71,6 +85,7 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
 
     // ---- Header ----
     private void sendHeader(String header){
+        System.out.println(header);
         try {
             header = header.substring(0, header.length() - 1); //elimino el ultimo salto de linea
             this.output = new DataOutputStream(new BufferedOutputStream(this.clientSocket.getOutputStream()));
@@ -97,31 +112,45 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
     }
 
     private String getFileHeader(File file, int deepness){
-        this.filePaths.add(new Pair<String, Integer>(file.getAbsolutePath(), Integer.parseInt("" + file.length())));
+        this.filePaths.add(new Pair<String, Long>(file.getAbsolutePath(), file.length()));
+        this.totalFileSize += file.length();
         return "F:" + deepness + ":" + file.length() + ":" + file.getName() + "\n";
     }
 
 
     //---- FileManagement ----
     private void sendFiles(File file){
-        for (Pair<String, Integer> fileInfo : this.filePaths) {
+        for (Pair<String, Long> fileInfo : this.filePaths) {
             sendFile(new File(fileInfo.getFirst()), fileInfo.getSecond());
         }
     }
 
-    private void sendFile(File file, int fileSize){
+    private void sendFile(File file, Long fileSize){
         try{
             this.input = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
             this.output = new DataOutputStream(new BufferedOutputStream(this.clientSocket.getOutputStream()));
 
-            int bytesReaded;          
-            while(fileSize > 0 && (bytesReaded = this.input.read(this.buffer, 0, Math.min(this.BUFFERSIZE, fileSize))) >= 0){
+            //File lenght could be much bigger than the Integer max value
+            int integerFileSizeValue = Integer.MAX_VALUE;
+            boolean integerMaxValueExceeded = true;
+            if(fileSize < Integer.MAX_VALUE){
+                integerFileSizeValue = Math.toIntExact(fileSize);
+                integerMaxValueExceeded = false;
+            }
+
+            int bytesReaded;
+            long totalBytesReaded = 0;
+            while(integerFileSizeValue > 0 && (bytesReaded = this.input.read(this.buffer, 0, Math.min(this.BUFFERSIZE, integerFileSizeValue))) >= 0){
                 this.output.write(this.buffer, 0, bytesReaded);
                 this.output.flush();
                 fileSize -= bytesReaded;
-                System.out.println("Enviando " + bytesReaded + " bytes");
+                totalBytesReaded += bytesReaded;
+                if(integerMaxValueExceeded && fileSize < Integer.MAX_VALUE){
+                    integerFileSizeValue = Math.toIntExact(fileSize);
+                    integerMaxValueExceeded = false;
+                }
+                this.notifyUpdateToTransferenceObservers(this.getProgress(totalBytesReaded)); 
             }
-            System.out.println("Archivo enviado");
         }
         catch(FileNotFoundException e){
             System.out.println("El archivo seleccionado no existe");
@@ -131,14 +160,31 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
         }
     }
 
-   //Transference Observer methods
-   @Override
-   public void addTransferenceObserver(TransferencesObserver observer) {
-       this.transferenceObserversList.add(observer);
-   }
+    private double getProgress(long totalBytesReaded){
+        return (int)(totalBytesReaded * 100) / this.totalFileSize;
+    }
 
-   @Override
-   public void removeTransferenceObserver(TransferencesObserver observer) {
-       this.transferenceObserversList.remove(observer);
-   }
+    //Transference Observer methods
+    @Override
+    public void addTransferenceObserver(TransferencesObserver observer) {
+        this.transferenceObserversList.add(observer);
+    }
+
+    private void notifyAddToTransferenceObservers(File file){
+        for(TransferencesObserver observer : this.transferenceObserversList){
+            observer.addTransference(SEND_MODE, this.src_addr, this.dst_addr, file.getName());
+        }
+    }
+
+    private void notifyUpdateToTransferenceObservers(double progress){
+        for(TransferencesObserver observer : this.transferenceObserversList){
+            observer.updateTransference(SEND_MODE, this.dst_addr, progress);
+        }
+    }
+
+    private void notifyRemoveToTransferenceObservers(){
+        for(TransferencesObserver observer : this.transferenceObserversList){
+            observer.endTransference(SEND_MODE, this.dst_addr);
+        }
+    }
 }

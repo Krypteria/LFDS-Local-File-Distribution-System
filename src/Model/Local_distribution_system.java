@@ -2,6 +2,7 @@ package Model;
 
 import java.io.File;
 
+import Model.Client.ClientsManager;
 import Model.Exceptions.ServerRunTimeException;
 import Model.Observers.HostsObserver;
 import Model.Observers.ServerObserver;
@@ -9,11 +10,13 @@ import Model.Observers.TransferencesObserver;
 
 
 public class Local_distribution_system {
-    private HostsRegister hostsRegister;
+    private HostsManager hostsRegister;
+    private ClientsManager clientsManager;
     private Server server;
 
     public Local_distribution_system(){
-        this.hostsRegister = new HostsRegister();
+        this.hostsRegister = new HostsManager();
+        this.clientsManager = new ClientsManager();
         this.server = new Server();
         this.openServer();
     }
@@ -46,8 +49,7 @@ public class Local_distribution_system {
 
     //Networking methods
     public void sendFile(String dst_addr, File file){
-        Client client = new Client(dst_addr, file);
-        new Thread(client).start();
+        this.clientsManager.createClient(dst_addr, file);
     }
 
 
@@ -80,15 +82,7 @@ public class Local_distribution_system {
         this.server.addTransferenceObserver(observer);
     }
 
-    public void removeTransferenceObserverServer(TransferencesObserver observer) {
-        this.server.removeTransferenceObserver(observer);
-    }   
-    
-    /*public void addTransferenceObserverClient(TransferencesObserver observer) {
-        this.server.addTransferenceObserver(observer);
+    public void addTransferenceObserverClient(TransferencesObserver observer) {
+        this.clientsManager.addTransferenceObserver(observer);
     }
-
-    public void removeTransferenceObserverClient(TransferencesObserver observer) {
-        this.server.removeTransferenceObserver(observer);
-    } */
 }

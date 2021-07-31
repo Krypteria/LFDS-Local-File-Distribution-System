@@ -27,6 +27,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
     private final int PORT = 2222;
     private final int BUFFERSIZE = 8192;
     private final String SEPARATOR = "\\";
+    private final String RECEIVE_MODE = "receive";
     
     //Status info
     private final String RUNNING = "Running";
@@ -53,17 +54,20 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
     private boolean avalaible;
     private boolean endServerActivity;
 
+    //private long totalFileSize; //SOLO SIRVE PARA UNO
+
     public Server(){
         try{
+            //this.totalFileSize = 0;
+            this.avalaible = true;
+            this.endServerActivity = false;
+
             this.serverSocket = new ServerSocket(this.PORT);
             this.buffer = new byte[this.BUFFERSIZE];
             this.serverObserversList = new ArrayList<ServerObserver>();
             this.transferenceObserversList = new ArrayList<TransferencesObserver>();
             this.directoryStack = new Stack<Pair<String, Integer>>();
             this.directoryStack.push(new Pair<String, Integer>(this.defaultRoute, 0));
-
-            this.avalaible = true;
-            this.endServerActivity = false;
         }
         catch(IOException e){ //esta excepcion va a estar dificil ver como mostrarla por pantalla
             throw new ServerRunTimeException("Error during server socket opening");
@@ -199,11 +203,6 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
         this.serverObserversList.add(observer);
     }
 
-    @Override
-    public void removeObserver(ServerObserver observer) {
-        this.serverObserversList.remove(observer);
-    }
-
     private void notifyObservers(String status, int port, String task){
         for(ServerObserver observer : this.serverObserversList){
             observer.updateStatus(status, port);
@@ -217,8 +216,21 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
         this.transferenceObserversList.add(observer);
     }
 
-    @Override
-    public void removeTransferenceObserver(TransferencesObserver observer) {
-        this.transferenceObserversList.remove(observer);
+    private void notifyAddToTransferenceObservers(File file, String src_addr){
+        for(TransferencesObserver observer : this.transferenceObserversList){
+            observer.addTransference(RECEIVE_MODE, src_addr, this.serverSocket.getInetAddress().toString(), file.getName());
+        }
+    }
+
+    private void notifyUpdateToTransferenceObservers(double progress, String src_addr){
+        for(TransferencesObserver observer : this.transferenceObserversList){
+            observer.updateTransference(RECEIVE_MODE, src_addr, progress);
+        }
+    }
+
+    private void notifyRemoveToTransferenceObservers(String src_addr){
+        for(TransferencesObserver observer : this.transferenceObserversList){
+            observer.endTransference(RECEIVE_MODE, src_addr);
+        }
     }
 }

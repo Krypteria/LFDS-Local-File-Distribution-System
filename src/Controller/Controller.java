@@ -6,6 +6,7 @@ import Model.Local_distribution_system;
 import Model.Exceptions.ServerRunTimeException;
 import Model.Observers.HostsObserver;
 import Model.Observers.ServerObserver;
+import Model.Observers.TransferencesObserver;
 
 public class Controller{
     
@@ -22,6 +23,10 @@ public class Controller{
 
     public void addObserver(ServerObserver observer) {
         this.localDistributionSystem.addObserver(observer);
+    }
+
+    public void addTransferenceObserverClient(TransferencesObserver observer) {
+        this.localDistributionSystem.addTransferenceObserverClient(observer);
     }
 
     //Server control methods
