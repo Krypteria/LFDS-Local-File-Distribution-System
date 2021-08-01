@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Stack;
 
+import javax.swing.filechooser.FileSystemView;
+
 import Misc.Pair;
 import Model.Exceptions.ServerRunTimeException;
 import Model.Observers.Observable;
@@ -38,7 +40,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
     private final String ON_TRANSFER = "Receiving a transference from"; //+<IPsrc>
     private final String DISABLED = "Disabled, transferences are not allowed";
 
-    private final String defaultRoute = "D:\\Biblioteca\\Escritorio\\PruebaRecibo";
+    private String defaultRoute;
 
     private List<ServerObserver> serverObserversList;
     private List<TransferencesObserver> transferenceObserversList;
@@ -61,6 +63,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
             //this.totalFileSize = 0;
             this.avalaible = true;
             this.endServerActivity = false;
+            this.defaultRoute = FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath() + "\\PruebaRecibo";
 
             this.serverSocket = new ServerSocket(this.PORT);
             this.buffer = new byte[this.BUFFERSIZE];
@@ -111,7 +114,11 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
         while(!this.endServerActivity){
             try{
                 Socket clientSocket = this.serverSocket.accept();
-                this.processClientTransference(clientSocket);
+                new Thread() {
+                    public void run() {
+                        processClientTransference(clientSocket);
+                    }
+                }.start();
             }
             catch(IOException e){
                 throw new ServerRunTimeException("Error waiting for connections");
@@ -120,9 +127,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
     }
 
     private void processClientTransference(Socket clientSocket) throws ServerRunTimeException{
-        this.avalaible = false;
         this.processHeader(clientSocket, this.receiveHeader(clientSocket));
-        this.avalaible = true; //ESTO SOLO FUNCIONARÍA CON UN SOLO ENVIO A LA VEZ
     }
 
     private String receiveHeader(Socket clientSocket) throws ServerRunTimeException{
@@ -190,6 +195,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
                 this.output.write(this.buffer, 0, bytesReaded);
                 this.output.flush();
                 fileSize -= bytesReaded;
+                totalBytesReaded += bytesReaded;
                 if(integerMaxValueExceeded && fileSize < Integer.MAX_VALUE){
                     integerFileSizeValue = Math.toIntExact(fileSize);
                     integerMaxValueExceeded = false;
