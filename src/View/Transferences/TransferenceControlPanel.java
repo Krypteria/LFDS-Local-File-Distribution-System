@@ -56,7 +56,7 @@ public class TransferenceControlPanel extends JPanel{
         this.add(headerInfo);
         this.add(contentInfo);
         this.setMaximumSize(new Dimension(530,80));
-        this.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
+        this.setBorder(BorderFactory.createMatteBorder(1, 1, 2, 1, Color.gray));
         this.setVisible(true);
     }
 

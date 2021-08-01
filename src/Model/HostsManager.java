@@ -22,9 +22,6 @@ public class HostsManager implements Observable<HostsObserver>{
     private void TEMPORAL(){
         this.hostsMap.put("192.168.1.39", new Host("Portatil", "192.168.1.39")); 
         this.hostsMap.put("0.0.0.0", new Host("Localhost", "0.0.0.0")); 
-        this.hostsMap.put("1.1.1.1", new Host("Nombre 2", "1.1.1.1")); 
-        this.hostsMap.put("10.2.1.1", new Host("Nombre 3", "10.2.1.1")); 
-        this.hostsMap.put("192.168.110.310", new Host("123456789123456", "192.168.110.310")); 
     }
 
     public void addNewHost(String name, String addr){

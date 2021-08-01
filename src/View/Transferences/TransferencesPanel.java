@@ -1,6 +1,7 @@
 package View.Transferences;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -40,13 +41,12 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
         this.setLayout(new BorderLayout());
         this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createMatteBorder(2,2,2,2, Color.gray),"Transferences"));
 
-        this.transferencesContentPanel = new JPanel();
-        this.transferencesContentPanel.setLayout(new BoxLayout(this.transferencesContentPanel, BoxLayout.PAGE_AXIS));
+        this.transferencesContentPanel = new JPanel(new BorderLayout(5,5));
         this.transferencesContentPanel.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
         this.transferencesContentPanel.setBackground(this.backgroundColor);
         this.clearTransferences();
-        this.add(this.transferencesContentPanel, BorderLayout.CENTER);
 
+        this.add(this.transferencesContentPanel, BorderLayout.CENTER);
         this.setVisible(true);
     }
 
@@ -54,13 +54,13 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
         this.transferencesContentPanel.removeAll();
 
         JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        infoPanel.setPreferredSize(new Dimension(MAX_WIDTH, 24));
         infoPanel.setMaximumSize(new Dimension(MAX_WIDTH, 24));
-        infoPanel.setBackground(Color.white);
+        infoPanel.setBackground(this.backgroundColor);
         infoPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.gray));
         infoPanel.add(new JLabel("There is no transferences in process"));
 
-        this.transferencesContentPanel.add(infoPanel);
-        
+        this.transferencesContentPanel.add(infoPanel, BorderLayout.PAGE_START);
         this.transferencesContentPanel.validate();
         this.transferencesContentPanel.repaint();
     }
@@ -84,7 +84,6 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
         else if(mode.equals(RECEIVE_MODE)){
             this.serverTransferencesMap.get(addr).updateProgressBar(progress);
         }
-        //this.updateTransferenceContent();
     }
 
     @Override
@@ -107,13 +106,23 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
     private void updateTransferenceContent(){
         this.transferencesContentPanel.removeAll();
 
+        JPanel content = new JPanel();
+        content.setLayout(new BoxLayout(content, BoxLayout.PAGE_AXIS));
+        content.setMaximumSize(new Dimension(488,10));
+        content.setPreferredSize(new Dimension(488,10));
+        content.setBackground(this.backgroundColor);
+
         for(Map.Entry<String, TransferenceControlPanel> mapElement : this.serverTransferencesMap.entrySet()) {
-            this.transferencesContentPanel.add(mapElement.getValue());
+            content.add(mapElement.getValue());
         }
         for(Map.Entry<String, TransferenceControlPanel> mapElement : this.clientTransferencesMap.entrySet()) {
-            this.transferencesContentPanel.add(mapElement.getValue());
+            content.add(mapElement.getValue());
         }
 
+        JScrollPane scrollPane = new JScrollPane(content, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+
+        this.transferencesContentPanel.add(scrollPane, BorderLayout.LINE_START);
         this.transferencesContentPanel.validate();
         this.transferencesContentPanel.repaint();
     }
