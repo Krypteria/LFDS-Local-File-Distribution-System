@@ -84,7 +84,7 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
         else if(mode.equals(RECEIVE_MODE)){
             this.serverTransferencesMap.get(addr).updateProgressBar(progress);
         }
-        this.updateTransferenceContent();
+        //this.updateTransferenceContent();
     }
 
     @Override
