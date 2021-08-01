@@ -25,7 +25,7 @@ import java.io.IOException;
 
 public class Server implements Runnable, Observable<ServerObserver>, TransferenceObservable<TransferencesObserver>{
     private final int PORT = 2222;
-    private final int BUFFERSIZE = 8192;
+    private final int BUFFERSIZE = 65536;
     private final String SEPARATOR = "\\";
     private final String RECEIVE_MODE = "receive";
     
@@ -145,7 +145,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
             String fileName = fileInfo.substring(fileInfo.lastIndexOf(":") + 1, fileInfo.length());
             String filePath = this.directoryStack.peek().getFirst() + SEPARATOR + fileName;
             int deepness = Character.getNumericValue(fileInfo.charAt(2));
-            int fileSize = Integer.parseInt(fileInfo.substring(4, fileInfo.lastIndexOf(":")));
+            Long fileSize = Long.parseLong(fileInfo.substring(4, fileInfo.lastIndexOf(":")));
 
             if(fileInfo.charAt(0) == 'D'){ //Directory
                 new File(filePath).mkdir();
@@ -172,16 +172,29 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
         }  
     }
 
-    private void receiveFile(Socket clientSocket, String filePath, int fileSize) throws ServerRunTimeException{
+    private void receiveFile(Socket clientSocket, String filePath, Long fileSize) throws ServerRunTimeException{
         try{
             this.output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(filePath))));
 
+            //File lenght could be much bigger than the Integer max value
+            int integerFileSizeValue = Integer.MAX_VALUE;
+            boolean integerMaxValueExceeded = true;
+            if(fileSize < Integer.MAX_VALUE){
+                integerFileSizeValue = Math.toIntExact(fileSize);
+                integerMaxValueExceeded = false;
+            }
+
             int bytesReaded;
-            while(fileSize > 0 && (bytesReaded = this.input.read(this.buffer, 0, Math.min(this.BUFFERSIZE, fileSize))) >= 0){
+            long totalBytesReaded = 0;
+            while(integerFileSizeValue > 0 && (bytesReaded = this.input.read(this.buffer, 0, Math.min(this.BUFFERSIZE, integerFileSizeValue))) >= 0){
                 this.output.write(this.buffer, 0, bytesReaded);
                 this.output.flush();
                 fileSize -= bytesReaded;
-                System.out.println("Recibiendo " + bytesReaded + " bytes");
+                if(integerMaxValueExceeded && fileSize < Integer.MAX_VALUE){
+                    integerFileSizeValue = Math.toIntExact(fileSize);
+                    integerMaxValueExceeded = false;
+                }
+                //this.notifyUpdateToTransferenceObservers(this.getProgress(totalBytesReaded)); 
             }
         }
         catch(FileNotFoundException e){
@@ -191,6 +204,11 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
             throw new ServerRunTimeException("Error during file processing");
         }
     }
+
+    /*private int getProgress(long totalBytesReaded){
+        return (int)((totalBytesReaded * 100) / this.totalFileSize);
+    }*/
+
 
     private void clearDirectoryStack(){
         this.directoryStack.clear();
@@ -222,7 +240,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
         }
     }
 
-    private void notifyUpdateToTransferenceObservers(double progress, String src_addr){
+    private void notifyUpdateToTransferenceObservers(int progress, String src_addr){
         for(TransferencesObserver observer : this.transferenceObserversList){
             observer.updateTransference(RECEIVE_MODE, src_addr, progress);
         }

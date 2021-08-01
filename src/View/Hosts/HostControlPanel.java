@@ -1,4 +1,4 @@
-package View;
+package View.Hosts;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -14,6 +14,8 @@ import java.awt.Dimension;
 import java.awt.Color;
 import Controller.Controller;
 import Model.Host;
+import View.FileManagmentPanel;
+import View.MainWindow;
 import View.Dialogs.EditHostDialog;
 
 public class HostControlPanel extends JPanel{

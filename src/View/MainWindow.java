@@ -11,6 +11,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 
 import Controller.Controller;
+import View.Hosts.HostsPanel;
+import View.Transferences.TransferencesPanel;
 
 public class MainWindow extends JFrame{
     private final int MAX_WIDTH = 880;

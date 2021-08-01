@@ -1,10 +1,8 @@
 package Model.Client;
 
 import java.net.Socket;
-import java.net.Inet4Address;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +22,7 @@ import java.io.FileNotFoundException;
 public class Client_networking implements TransferenceObservable<TransferencesObserver>{
 
     private final int PORT = 2222;
-    private final int BUFFERSIZE = 8192;
+    private final int BUFFERSIZE = 65536;
 
     private final String SEND_MODE = "send";
 
@@ -160,8 +158,8 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
         }
     }
 
-    private double getProgress(long totalBytesReaded){
-        return (int)(totalBytesReaded * 100) / this.totalFileSize;
+    private int getProgress(long totalBytesReaded){
+        return (int)((totalBytesReaded * 100) / this.totalFileSize);
     }
 
     //Transference Observer methods
@@ -176,7 +174,7 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
         }
     }
 
-    private void notifyUpdateToTransferenceObservers(double progress){
+    private void notifyUpdateToTransferenceObservers(int progress){
         for(TransferencesObserver observer : this.transferenceObserversList){
             observer.updateTransference(SEND_MODE, this.dst_addr, progress);
         }

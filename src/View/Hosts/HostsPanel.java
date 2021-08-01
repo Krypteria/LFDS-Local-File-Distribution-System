@@ -1,8 +1,10 @@
-package View;
+package View.Hosts;
 
 import Controller.Controller;
 import Model.Host;
 import Model.Observers.HostsObserver;
+import View.FileManagmentPanel;
+import View.MainWindow;
 import View.Dialogs.AddHostDialog;
 
 import javax.swing.JPanel;

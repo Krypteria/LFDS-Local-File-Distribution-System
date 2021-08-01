@@ -1,4 +1,4 @@
-package View;
+package View.Transferences;
 
 import javax.swing.JPanel;
 import javax.swing.BorderFactory;
@@ -42,6 +42,7 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
 
         this.transferencesContentPanel = new JPanel();
         this.transferencesContentPanel.setLayout(new BoxLayout(this.transferencesContentPanel, BoxLayout.PAGE_AXIS));
+        this.transferencesContentPanel.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
         this.transferencesContentPanel.setBackground(this.backgroundColor);
         this.clearTransferences();
         this.add(this.transferencesContentPanel, BorderLayout.CENTER);
@@ -54,8 +55,9 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
 
         JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         infoPanel.setMaximumSize(new Dimension(MAX_WIDTH, 24));
-        infoPanel.setBackground(Color.red);
-        infoPanel.add(new JLabel("There is no transferences in progress"));
+        infoPanel.setBackground(Color.white);
+        infoPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.gray));
+        infoPanel.add(new JLabel("There is no transferences in process"));
 
         this.transferencesContentPanel.add(infoPanel);
         
@@ -75,12 +77,12 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
     }
 
     @Override
-    public void updateTransference(String mode, String addr, double progress) {
+    public void updateTransference(String mode, String addr, int progress) {
         if(mode.equals(SEND_MODE)){
-            this.clientTransferencesMap.get(addr).updateProgressBar();
+            this.clientTransferencesMap.get(addr).updateProgressBar(progress);
         }
         else if(mode.equals(RECEIVE_MODE)){
-            this.serverTransferencesMap.get(addr).updateProgressBar();
+            this.serverTransferencesMap.get(addr).updateProgressBar(progress);
         }
         this.updateTransferenceContent();
     }

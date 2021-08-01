@@ -1,4 +1,4 @@
-package View;
+package View.Transferences;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -7,10 +7,12 @@ import java.awt.FlowLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 
 public class TransferenceControlPanel extends JPanel{
 
     private final Color backgroundColor = Color.white;
+    private JProgressBar progressBar;
     private JLabel src_addrLabel;
     private JLabel dst_addrLabel;
     private JLabel fileNameLabel;
@@ -29,7 +31,11 @@ public class TransferenceControlPanel extends JPanel{
         this.src_addrLabel.setPreferredSize(new Dimension(100,22));
         this.dst_addrLabel.setPreferredSize(new Dimension(100,22));
         this.fileNameLabel.setPreferredSize(new Dimension(150,22));
-        
+
+        this.progressBar = new JProgressBar(0, 100);
+        this.progressBar.setValue(0);
+        this.progressBar.setStringPainted(true);
+
         JPanel headerInfo = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JPanel contentInfo = new JPanel(new FlowLayout(FlowLayout.LEFT));
         headerInfo.setMaximumSize(new Dimension(530,22));
@@ -44,6 +50,8 @@ public class TransferenceControlPanel extends JPanel{
         
         contentInfo.add(new JLabel("File name:"));
         contentInfo.add(this.fileNameLabel);
+        contentInfo.add(new JLabel("Progress:"));
+        contentInfo.add(this.progressBar);
     
         this.add(headerInfo);
         this.add(contentInfo);
@@ -52,7 +60,7 @@ public class TransferenceControlPanel extends JPanel{
         this.setVisible(true);
     }
 
-    public void updateProgressBar(){
-        
+    public void updateProgressBar(int progress){
+        this.progressBar.setValue(progress);
     }
 }
