@@ -36,15 +36,18 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
 
     private String src_addr;
     private String dst_addr;
-    private long totalFileSize;
 
+    private long totalFileSize;
+    private long totalBytesReaded;
 
     public Client_networking(String dst_addr){
         try{
             this.src_addr = "198.100.200.204"; //VER SI FUNCIONA BIEN
             System.out.println(src_addr); 
             this.dst_addr = dst_addr;
+
             this.totalFileSize = 0;
+            this.totalBytesReaded = 0;
 
             this.clientSocket = new Socket();
             this.clientSocket.connect(new InetSocketAddress(dst_addr, this.PORT));
@@ -86,6 +89,7 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
         try {
             header = header.substring(0, header.length() - 1); //elimino el ultimo salto de linea
             header = ""+this.totalFileSize + "\n" + fileName + "\n" + header; //añado tamaño total y nombre del archivo
+
             this.output = new DataOutputStream(new BufferedOutputStream(this.clientSocket.getOutputStream()));
             this.output.writeUTF(header);
             this.output.flush();
@@ -135,17 +139,16 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
             }
 
             int bytesReaded;
-            long totalBytesReaded = 0;
             while(integerFileSizeValue > 0 && (bytesReaded = this.input.read(this.buffer, 0, Math.min(this.BUFFERSIZE, integerFileSizeValue))) >= 0){
                 this.output.write(this.buffer, 0, bytesReaded);
                 this.output.flush();
                 fileSize -= bytesReaded;
-                totalBytesReaded += bytesReaded;
+                this.totalBytesReaded += bytesReaded;
                 if(integerMaxValueExceeded && fileSize < Integer.MAX_VALUE){
                     integerFileSizeValue = Math.toIntExact(fileSize);
                     integerMaxValueExceeded = false;
                 }
-                this.notifyUpdateToTransferenceObservers(this.getProgress(totalBytesReaded)); 
+                this.notifyUpdateToTransferenceObservers(this.getProgress()); 
             }
         }
         catch(FileNotFoundException e){
@@ -156,8 +159,8 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
         }
     }
 
-    private int getProgress(long totalBytesReaded){
-        return (int)((totalBytesReaded * 100) / this.totalFileSize);
+    private int getProgress(){
+        return (int)((this.totalBytesReaded * 100) / this.totalFileSize);
     }
 
     //Transference Observer methods

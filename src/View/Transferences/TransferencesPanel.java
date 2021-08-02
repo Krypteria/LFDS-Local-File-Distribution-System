@@ -61,7 +61,7 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
         infoPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.gray));
         infoPanel.add(new JLabel("There is no transferences in process"));
 
-        this.transferencesContentPanel.add(infoPanel, BorderLayout.PAGE_START);
+        this.transferencesContentPanel.add(infoPanel, BorderLayout.PAGE_START);        
         this.transferencesContentPanel.validate();
         this.transferencesContentPanel.repaint();
     }
@@ -109,8 +109,8 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
 
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.PAGE_AXIS));
-        content.setMaximumSize(new Dimension(488,10));
-        content.setPreferredSize(new Dimension(488,10));
+        content.setMaximumSize(new Dimension(530,100));
+        content.setPreferredSize(new Dimension(530,100));
         content.setBackground(this.backgroundColor);
 
         for(Map.Entry<String, TransferenceControlPanel> mapElement : this.serverTransferencesMap.entrySet()) {

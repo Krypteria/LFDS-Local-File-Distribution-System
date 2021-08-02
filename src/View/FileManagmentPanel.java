@@ -141,11 +141,11 @@ public class FileManagmentPanel extends JPanel{
         if(!this.selectedHostMap.isEmpty()){
             if(this.selectedFile != null){
                 for(Map.Entry<String, String> mapElement : this.selectedHostMap.entrySet()) {
-                    String address = mapElement.getKey();
-                    this.selectedFileLabel.setText("");
-                    this.removeAllSelectedHosts();                       
-                    this.controller.sendFile(address, this.selectedFile);
+                    String address = mapElement.getKey();                    
+                    controller.sendFile(address, selectedFile);                   
                 }
+                this.selectedFileLabel.setText("");
+                this.removeAllSelectedHosts(); 
             }
             else{
                 System.out.println("Fichero invalido");
