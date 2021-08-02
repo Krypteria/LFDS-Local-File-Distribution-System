@@ -7,7 +7,6 @@ import javax.swing.JPanel;
 import java.awt.Insets;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-import java.awt.Color;
 import java.awt.Dimension;
 
 import Controller.Controller;
@@ -37,7 +36,7 @@ public class MainWindow extends JFrame{
         layout.columnWidths = new int[] {530,350};
         layout.rowHeights = new int[] {370,300};
         layout.columnWeights = new double[] {1,1};
-        layout.rowWeights = new double[] {1,1};
+        layout.rowWeights = new double[] {1,1,1};
 
         this.mainPanel.setLayout(layout);
         

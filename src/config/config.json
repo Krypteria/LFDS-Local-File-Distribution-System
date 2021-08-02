@@ -1,0 +1,10 @@
+{"hostManagerState": {"hostsStateArray": [
+   {"hostState": {
+      "address": "0.0.0.0",
+      "name": "Localhost"
+   }},
+   {"hostState": {
+      "address": "192.168.1.39",
+      "name": "Portatil"
+   }}
+]}}

@@ -4,24 +4,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import Model.Observers.HostsObserver;
 import Model.Observers.Observable;
 
-public class HostsManager implements Observable<HostsObserver>{
+public class HostsManager implements Observable<HostsObserver>, UseState{
     private HashMap<String, Host> hostsMap;
     private List<HostsObserver> hostsObserverList;
 
     public HostsManager(){
         this.hostsMap = new HashMap<>();    
         this.hostsObserverList = new ArrayList<HostsObserver>();
-        this.TEMPORAL();
-    }
-
-    //Temporal hasta que defina el sistema de serializacion, la primera carga sería del tirón, no updateando cada vez
-    private void TEMPORAL(){
-        this.hostsMap.put("192.168.1.39", new Host("Portatil", "192.168.1.39")); 
-        this.hostsMap.put("0.0.0.0", new Host("Localhost", "0.0.0.0")); 
     }
 
     public void addNewHost(String name, String addr){
@@ -54,6 +51,38 @@ public class HostsManager implements Observable<HostsObserver>{
     public void addObserver(HostsObserver observer) {
         this.hostsObserverList.add(observer);  
         this.updateGUIHosts();
+    }
+
+    @Override
+    public void setState(TransferObject transferObject) {
+        JSONObject state = transferObject.getState();
+        JSONArray hostsState = state.getJSONArray("hostsStateArray");
+
+        for(int i = 0; i < hostsState.length(); i++){
+            TransferObject hostTransferObject = new TransferObject();
+            hostTransferObject.setState(hostsState.getJSONObject(i));
+
+            Host host = new Host(null, null);
+            host.setState(hostTransferObject);
+
+            this.hostsMap.put(host.getAddress(), host);
+        }
+    }
+
+    @Override
+    public TransferObject getState() {
+        TransferObject transferObject = new TransferObject();
+        JSONObject state = new JSONObject();
+
+        JSONArray hostsState = new JSONArray();
+        for(Map.Entry<String, Host> entry : this.hostsMap.entrySet()) {
+            Host host = entry.getValue();
+            hostsState.put(host.getState().getState());
+        }
+
+        state.put("hostsStateArray", hostsState);
+        transferObject.setState(state);
+        return transferObject;
     }
 
 }

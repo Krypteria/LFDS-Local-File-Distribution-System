@@ -36,6 +36,7 @@ public class ServerPanel extends JPanel implements ServerObserver{
     private JButton openServerButton;
     private JButton closeServerButton;
     private JButton resetServerButton;
+    private JButton changeDefaultDownloadRouteButton;
     
     private JLabel serverStatusLabel;
     private JLabel serverPortLabel;
@@ -114,6 +115,7 @@ public class ServerPanel extends JPanel implements ServerObserver{
         this.openServerButton = new JButton("Open");
         this.closeServerButton = new JButton("Close");
         this.resetServerButton = new JButton("Reset");
+        this.changeDefaultDownloadRouteButton = new JButton("Change");
 
         this.openServerButton.setEnabled(false);
 
@@ -138,9 +140,17 @@ public class ServerPanel extends JPanel implements ServerObserver{
             }
         });
 
+        this.changeDefaultDownloadRouteButton.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                performChangeDefaultRouteAction();     
+            }
+        });
+
         controlPanel.add(this.openServerButton);
         controlPanel.add(this.resetServerButton);
         controlPanel.add(this.closeServerButton);
+        controlPanel.add(this.changeDefaultDownloadRouteButton);
 
         this.add(statusPanel, BorderLayout.PAGE_START);
         this.add(taskPanel, BorderLayout.CENTER);
@@ -182,6 +192,10 @@ public class ServerPanel extends JPanel implements ServerObserver{
         }.start();
     }
 
+    private void performChangeDefaultRouteAction(){
+        //controller.changeDefaultDownloadRoute()
+    }
+
     @Override
     public void updateStatus(String newStatus, int newPort) {
         this.serverStatusLabel.setText(newStatus);
@@ -204,5 +218,6 @@ public class ServerPanel extends JPanel implements ServerObserver{
     @Override
     public void updateTaskInfo(String newTask) {
         // TODO Auto-generated method stub
+        
     }
 }
