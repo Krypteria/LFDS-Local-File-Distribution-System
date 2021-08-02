@@ -61,13 +61,13 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
     }
 
     public void send(File file){
-        this.notifyAddToTransferenceObservers(file);
+        this.notifyAddToTransferenceObservers(file.getName());
         if(file.isDirectory()){
-            this.sendHeader(this.getDirectoryHeader(file, 1));
+            this.sendHeader(file.getName(), this.getDirectoryHeader(file, 1));
             sendFiles(file);
         }
         else{
-            this.sendHeader(this.getFileHeader(file, 1));
+            this.sendHeader(file.getName(), this.getFileHeader(file, 1));
             sendFile(file, file.length());
         }
         this.notifyRemoveToTransferenceObservers();
@@ -82,15 +82,13 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
     }
 
     // ---- Header ----
-    private void sendHeader(String header){
-        System.out.println(header);
+    private void sendHeader(String fileName, String header){
         try {
             header = header.substring(0, header.length() - 1); //elimino el ultimo salto de linea
+            header = ""+this.totalFileSize + "\n" + fileName + "\n" + header; //añado tamaño total y nombre del archivo
             this.output = new DataOutputStream(new BufferedOutputStream(this.clientSocket.getOutputStream()));
             this.output.writeUTF(header);
             this.output.flush();
-
-            System.out.println("Header enviado al servidor");
         } catch (IOException e) {
             System.out.println("EEE");
         }
@@ -168,9 +166,9 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
         this.transferenceObserversList.add(observer);
     }
 
-    private void notifyAddToTransferenceObservers(File file){
+    private void notifyAddToTransferenceObservers(String fileName){
         for(TransferencesObserver observer : this.transferenceObserversList){
-            observer.addTransference(SEND_MODE, this.src_addr, this.dst_addr, file.getName());
+            observer.addTransference(SEND_MODE, this.src_addr, this.dst_addr, fileName);
         }
     }
 

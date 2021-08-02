@@ -34,6 +34,7 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
         this.serverTransferencesMap = new HashMap<String, TransferenceControlPanel>();
         this.controller = controller;
         this.controller.addTransferenceObserverClient(this);
+        this.controller.addTransferenceObserverServer(this);
         this.initGUI();
     }    
 
@@ -68,10 +69,10 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
     @Override
     public void addTransference(String mode, String src_addr, String dst_addr, String fileName) {
         if(mode.equals(SEND_MODE)){
-            this.clientTransferencesMap.put(dst_addr, new TransferenceControlPanel(src_addr, dst_addr, fileName));
+            this.clientTransferencesMap.put(dst_addr, new TransferenceControlPanel("Sending", src_addr, dst_addr, fileName));
         }
         else if(mode.equals(RECEIVE_MODE)){
-            this.serverTransferencesMap.put(src_addr, new TransferenceControlPanel(src_addr, dst_addr, fileName));
+            this.serverTransferencesMap.put(src_addr, new TransferenceControlPanel("Receiving", src_addr, dst_addr, fileName));
         }
         this.updateTransferenceContent();
     }

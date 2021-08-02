@@ -29,6 +29,10 @@ public class Controller{
         this.localDistributionSystem.addTransferenceObserverClient(observer);
     }
 
+    public void addTransferenceObserverServer(TransferencesObserver observer) {
+        this.localDistributionSystem.addTransferenceObserverServer(observer);
+    }
+
     //Server control methods
     public void openServer() throws ServerRunTimeException{
         this.localDistributionSystem.openServer();

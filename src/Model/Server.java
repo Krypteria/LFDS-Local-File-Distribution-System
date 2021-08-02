@@ -56,11 +56,11 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
     private boolean avalaible;
     private boolean endServerActivity;
 
-    //private long totalFileSize; //SOLO SIRVE PARA UNO
+    private long totalFileSize; 
 
     public Server(){
         try{
-            //this.totalFileSize = 0;
+            this.totalFileSize = 0;
             this.avalaible = true;
             this.endServerActivity = false;
             this.defaultRoute = FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath() + "\\PruebaRecibo";
@@ -99,13 +99,18 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
     }
 
     public void resetServer() throws ServerRunTimeException{
-        this.closeServer();
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            throw new ServerRunTimeException("Error during reset wait operation");
+        if(this.avalaible){
+            this.closeServer();
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                throw new ServerRunTimeException("Error during reset wait operation");
+            }
+            this.openServer();
         }
-        this.openServer();
+        else{
+            throw new ServerRunTimeException("The server cannot be shut down as it is performing operations, try when it is done");
+        }
     }
     
     //Transference methods
@@ -144,6 +149,13 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
 
     private void processHeader(Socket clientSocket, String header) throws ServerRunTimeException{
         Scanner headerInfo = new Scanner(header);
+        String generalFileName = "";
+        String src_addr = clientSocket.getInetAddress().toString().substring(1);
+
+        this.totalFileSize = Long.parseLong(headerInfo.nextLine());
+        generalFileName = headerInfo.nextLine();
+
+        this.notifyAddToTransferenceObservers(generalFileName, src_addr);
         while(headerInfo.hasNextLine()){
             
             String fileInfo = headerInfo.nextLine();
@@ -165,8 +177,9 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
                 this.receiveFile(clientSocket, filePath, fileSize);
             }
         }
-        headerInfo.close();
+        this.notifyRemoveToTransferenceObservers(src_addr);
         this.clearDirectoryStack();
+        headerInfo.close();
 
         try {
             this.output.close();
@@ -200,7 +213,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
                     integerFileSizeValue = Math.toIntExact(fileSize);
                     integerMaxValueExceeded = false;
                 }
-                //this.notifyUpdateToTransferenceObservers(this.getProgress(totalBytesReaded)); 
+                this.notifyUpdateToTransferenceObservers(this.getProgress(totalBytesReaded), clientSocket.getInetAddress().toString().substring(1)); 
             }
         }
         catch(FileNotFoundException e){
@@ -211,9 +224,9 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
         }
     }
 
-    /*private int getProgress(long totalBytesReaded){
+    private int getProgress(long totalBytesReaded){
         return (int)((totalBytesReaded * 100) / this.totalFileSize);
-    }*/
+    }
 
 
     private void clearDirectoryStack(){
@@ -240,9 +253,9 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
         this.transferenceObserversList.add(observer);
     }
 
-    private void notifyAddToTransferenceObservers(File file, String src_addr){
+    private void notifyAddToTransferenceObservers(String fileName, String src_addr){
         for(TransferencesObserver observer : this.transferenceObserversList){
-            observer.addTransference(RECEIVE_MODE, src_addr, this.serverSocket.getInetAddress().toString(), file.getName());
+            observer.addTransference(RECEIVE_MODE, src_addr, this.serverSocket.getInetAddress().toString(), fileName);
         }
     }
 
