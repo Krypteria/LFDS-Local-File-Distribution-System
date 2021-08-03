@@ -42,6 +42,7 @@ public class Local_distribution_system implements UseState{
 
     public void changeDefaultDownloadRoute(String route){
         this.server.changeDefaultDownloadRoute(route);
+        this.saveAppState();
     }
 
     //Hosts methods
@@ -107,12 +108,21 @@ public class Local_distribution_system implements UseState{
     @Override
     public void setState(TransferObject transferObject) {
         if(transferObject != null){
-            TransferObject hostManagerTransferObject = new TransferObject();
             JSONObject state = transferObject.getState();
-    
-            JSONObject hostManagerState = state.getJSONObject("hostManagerState");
-            hostManagerTransferObject.setState(hostManagerState);
-            this.hostsManager.setState(hostManagerTransferObject);
+            JSONObject stateContent = state.getJSONObject("configFile");
+
+            if(stateContent.has("hostManangerState")){
+                TransferObject hostManagerTransferObject = new TransferObject();
+                JSONObject hostManagerState = stateContent.getJSONObject("hostManagerState");
+                hostManagerTransferObject.setState(hostManagerState);
+                this.hostsManager.setState(hostManagerTransferObject);
+            }
+            if(stateContent.has("serverState")){
+                TransferObject serverTransferObject = new TransferObject();
+                JSONObject serverState = stateContent.getJSONObject("serverState");
+                serverTransferObject.setState(serverState);
+                this.server.setState(serverTransferObject);
+            }
         }
     }
 
@@ -120,8 +130,10 @@ public class Local_distribution_system implements UseState{
     public TransferObject getState() {
         TransferObject transferObject = new TransferObject();
         JSONObject state = new JSONObject();
-
-        state.put("hostManagerState", hostsManager.getState().getState());
+        JSONObject stateContent = new JSONObject();
+        stateContent.put("hostManagerState", this.hostsManager.getState().getState());
+        stateContent.put("serverState", this.server.getState().getState());
+        state.put("configFile", stateContent);
         transferObject.setState(state);
         return transferObject;
     }

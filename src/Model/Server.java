@@ -10,6 +10,8 @@ import java.util.Stack;
 
 import javax.swing.filechooser.FileSystemView;
 
+import org.json.JSONObject;
+
 import Misc.Pair;
 import Model.Exceptions.ServerRunTimeException;
 import Model.Observers.Observable;
@@ -26,7 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class Server implements Runnable, Observable<ServerObserver>, TransferenceObservable<TransferencesObserver>{
+public class Server implements Runnable, Observable<ServerObserver>, TransferenceObservable<TransferencesObserver>, UseState{
     private final int PORT = 2222;
     private final int BUFFERSIZE = 65536;
     private final String SEPARATOR = "\\";
@@ -283,5 +285,22 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
         for(TransferencesObserver observer : this.transferenceObserversList){
             observer.endTransference(RECEIVE_MODE, src_addr);
         }
+    }
+
+    @Override
+    public void setState(TransferObject transferObject) {
+        JSONObject state = transferObject.getState();
+        this.defaultRoute = state.getString("downloadRoute");
+    }
+
+    @Override
+    public TransferObject getState() {
+        TransferObject transferObject = new TransferObject();
+        JSONObject state = new JSONObject();
+        
+        state.put("downloadRoute", this.defaultRoute);
+        transferObject.setState(state);
+        
+        return transferObject;
     }
 }

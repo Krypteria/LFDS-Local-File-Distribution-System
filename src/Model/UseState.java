@@ -1,6 +1,6 @@
 package Model;
 
 public interface UseState {
-    void setState(TransferObject transgfObject);
+    void setState(TransferObject transferObject);
     TransferObject getState();
 }
