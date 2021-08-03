@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import Controller.Controller;
 import Model.Exceptions.ServerRunTimeException;
 import Model.Observers.ServerObserver;
+import View.Dialogs.ChangeDefaultRouteDialog;
 
 public class ServerPanel extends JPanel implements ServerObserver{
     
@@ -29,6 +30,8 @@ public class ServerPanel extends JPanel implements ServerObserver{
 
     private final String RUNNING = "Running";
     private final String STOPPED = "Stopped";
+
+    private String downloadRoute;
 
     private Controller controller;
     private MainWindow parent;
@@ -193,7 +196,11 @@ public class ServerPanel extends JPanel implements ServerObserver{
     }
 
     private void performChangeDefaultRouteAction(){
-        //controller.changeDefaultDownloadRoute()
+        ChangeDefaultRouteDialog dialog = new ChangeDefaultRouteDialog(this.parent, this.downloadRoute);
+        int status = dialog.open();
+        if(status == 1){
+            controller.changeDefaultDownloadRoute(dialog.getDownloadRoute());
+        }
     }
 
     @Override
@@ -219,5 +226,10 @@ public class ServerPanel extends JPanel implements ServerObserver{
     public void updateTaskInfo(String newTask) {
         // TODO Auto-generated method stub
         
+    }
+
+    @Override
+    public void getDefaultDownloadRoute(String route) {
+       this.downloadRoute = route;
     }
 }

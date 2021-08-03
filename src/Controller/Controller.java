@@ -46,6 +46,10 @@ public class Controller{
         this.localDistributionSystem.resetServer();
     }
 
+    public void changeDefaultDownloadRoute(String route){
+        this.localDistributionSystem.changeDefaultDownloadRoute(route);
+    }
+
     //Networking methods
     public void sendFile(String dst_addr, File file){
         this.localDistributionSystem.sendFile(dst_addr, file);

@@ -39,6 +39,10 @@ public class Local_distribution_system implements UseState{
         this.server.resetServer();
     }
 
+    public void changeDefaultDownloadRoute(String route){
+        this.server.changeDefaultDownloadRoute(route);
+    }
+
     //Hosts methods
     public void addNewHost(String name, String addr){
         this.hostsManager.addNewHost(name, addr);

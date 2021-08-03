@@ -63,14 +63,13 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
             this.totalFileSize = 0;
             this.avalaible = true;
             this.endServerActivity = false;
-            this.defaultRoute = FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath() + "\\PruebaRecibo";
+            this.defaultRoute = FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath();
 
             this.serverSocket = new ServerSocket(this.PORT);
             this.buffer = new byte[this.BUFFERSIZE];
             this.serverObserversList = new ArrayList<ServerObserver>();
             this.transferenceObserversList = new ArrayList<TransferencesObserver>();
             this.directoryStack = new Stack<Pair<String, Integer>>();
-            this.directoryStack.push(new Pair<String, Integer>(this.defaultRoute, 0));
         }
         catch(IOException e){ //esta excepcion va a estar dificil ver como mostrarla por pantalla
             throw new ServerRunTimeException("Error during server socket opening");
@@ -112,6 +111,13 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
             throw new ServerRunTimeException("The server cannot be shut down as it is performing operations, try when it is done");
         }
     }
+
+    public void changeDefaultDownloadRoute(String route){
+        this.defaultRoute = route;
+        for(ServerObserver observer : this.serverObserversList){
+            observer.getDefaultDownloadRoute(route);
+        }
+    }
     
     //Transference methods
     @Override
@@ -132,6 +138,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
     }
 
     private void processClientTransference(Socket clientSocket) throws ServerRunTimeException{
+        this.directoryStack.push(new Pair<String, Integer>(this.defaultRoute, 0));
         this.processHeader(clientSocket, this.receiveHeader(clientSocket));
     }
 
@@ -238,6 +245,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
     @Override
     public void addObserver(ServerObserver observer) {
         this.serverObserversList.add(observer);
+        observer.getDefaultDownloadRoute(this.defaultRoute);
     }
 
     private void notifyObservers(String status, int port, String task){
