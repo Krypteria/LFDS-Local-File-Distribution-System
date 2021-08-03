@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import org.json.JSONObject;
 
 import Model.Client.ClientsManager;
+import Model.Exceptions.HostRunTimeException;
 import Model.Exceptions.ServerRunTimeException;
 import Model.Observers.HostsObserver;
 import Model.Observers.ServerObserver;
@@ -44,12 +45,12 @@ public class Local_distribution_system implements UseState{
     }
 
     //Hosts methods
-    public void addNewHost(String name, String addr){
+    public void addNewHost(String name, String addr) throws HostRunTimeException{
         this.hostsManager.addNewHost(name, addr);
         this.saveAppState();
     }
 
-    public void editHost(String name, String addr, String newAddr){
+    public void editHost(String name, String addr, String newAddr) throws HostRunTimeException{
         this.hostsManager.editHost(name, addr, newAddr);
         this.saveAppState();
     }

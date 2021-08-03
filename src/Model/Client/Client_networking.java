@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Misc.Pair;
+import Model.Exceptions.ClientRunTimeException;
 import Model.Observers.TransferenceObservable;
 import Model.Observers.TransferencesObserver;
 
@@ -55,7 +56,7 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
             this.buffer = new byte[this.BUFFERSIZE];
             this.filePaths = new ArrayList<Pair<String, Long>>();
         }
-        catch(UnknownHostException e){
+        catch(UnknownHostException e){ //Gestion de excepciones internas 
             System.out.println("La IP destino no es válida");
         }
         catch(IOException e){
@@ -64,28 +65,34 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
     }
 
     public void send(File file){
-        this.notifyAddToTransferenceObservers(file.getName());
-        if(file.isDirectory()){
-            this.sendHeader(file.getName(), this.getDirectoryHeader(file, 1));
-            sendFiles(file);
-        }
-        else{
-            this.sendHeader(file.getName(), this.getFileHeader(file, 1));
-            sendFile(file, file.length());
-        }
-        this.notifyRemoveToTransferenceObservers();
-
         try{
-            this.input.close();
-            this.output.close(); 
-            this.clientSocket.close();
-        }catch(IOException e){
-            System.out.println("Error al cerrar las conexiones");
+            this.notifyAddToTransferenceObservers(file.getName());
+            if(file.isDirectory()){
+                this.sendHeader(file.getName(), this.getDirectoryHeader(file, 1));
+                sendFiles(file);
+            }
+            else{
+                this.sendHeader(file.getName(), this.getFileHeader(file, 1));
+                sendFile(file, file.length());
+            }
+            this.notifyRemoveToTransferenceObservers();
+
+            try{
+                this.input.close();
+                this.output.close(); 
+                this.clientSocket.close();
+            }catch(IOException e){
+                throw new ClientRunTimeException("Error while closing resources");
+            }
+        }
+        catch(ClientRunTimeException e){
+            this.notifyRemoveToTransferenceObservers();
+            this.notifyException(e.getMessage());
         }
     }
 
     // ---- Header ----
-    private void sendHeader(String fileName, String header){
+    private void sendHeader(String fileName, String header) throws ClientRunTimeException{
         try {
             header = header.substring(0, header.length() - 1); //elimino el ultimo salto de linea
             header = ""+this.totalFileSize + "\n" + fileName + "\n" + header; //añado tamaño total y nombre del archivo
@@ -94,7 +101,7 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
             this.output.writeUTF(header);
             this.output.flush();
         } catch (IOException e) {
-            System.out.println("EEE");
+            throw new ClientRunTimeException("Error while receiving connection header");
         }
     }
 
@@ -119,13 +126,13 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
 
 
     //---- FileManagement ----
-    private void sendFiles(File file){
+    private void sendFiles(File file) throws ClientRunTimeException{
         for (Pair<String, Long> fileInfo : this.filePaths) {
             sendFile(new File(fileInfo.getFirst()), fileInfo.getSecond());
         }
     }
 
-    private void sendFile(File file, Long fileSize){
+    private void sendFile(File file, Long fileSize) throws ClientRunTimeException{
         try{
             this.input = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
             this.output = new DataOutputStream(new BufferedOutputStream(this.clientSocket.getOutputStream()));
@@ -142,20 +149,22 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
             while(integerFileSizeValue > 0 && (bytesReaded = this.input.read(this.buffer, 0, Math.min(this.BUFFERSIZE, integerFileSizeValue))) >= 0){
                 this.output.write(this.buffer, 0, bytesReaded);
                 this.output.flush();
+
                 fileSize -= bytesReaded;
                 this.totalBytesReaded += bytesReaded;
                 if(integerMaxValueExceeded && fileSize < Integer.MAX_VALUE){
                     integerFileSizeValue = Math.toIntExact(fileSize);
                     integerMaxValueExceeded = false;
                 }
+
                 this.notifyUpdateToTransferenceObservers(this.getProgress()); 
             }
         }
         catch(FileNotFoundException e){
-            System.out.println("El archivo seleccionado no existe");
+            throw new ClientRunTimeException("File not found");
         }
         catch(IOException e){
-            System.out.println("Error al enviar el fichero");
+            throw new ClientRunTimeException("Error while sending the file");
         }
     }
 
@@ -184,6 +193,12 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
     private void notifyRemoveToTransferenceObservers(){
         for(TransferencesObserver observer : this.transferenceObserversList){
             observer.endTransference(SEND_MODE, this.dst_addr);
+        }
+    }
+
+    private void notifyException(String message){
+        for(TransferencesObserver observer : this.transferenceObserversList){
+            observer.notifyException(message);
         }
     }
 }

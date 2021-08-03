@@ -9,6 +9,7 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import Model.Exceptions.HostRunTimeException;
 import Model.Observers.HostsObserver;
 import Model.Observers.Observable;
 
@@ -21,19 +22,29 @@ public class HostsManager implements Observable<HostsObserver>, UseState{
         this.hostsObserverList = new ArrayList<HostsObserver>();
     }
 
-    public void addNewHost(String name, String addr){
-        this.hostsMap.put(addr, new Host(name, addr));
-        this.updateGUIHosts();
+    public void addNewHost(String name, String addr) throws HostRunTimeException{
+        if(!this.hostsMap.containsKey(addr)){
+            this.hostsMap.put(addr, new Host(name, addr));
+            this.updateGUIHosts();
+        }
+        else{
+            throw new HostRunTimeException("That address is already taken");
+        }
     }
 
-    public void editHost(String name, String addr, String newAddr){
-        Host host = this.hostsMap.get(addr);
-        host.setName(name);
-        host.setAddr(newAddr);
-
-        this.hostsMap.remove(addr);
-        this.hostsMap.put(newAddr, host);
-        this.updateGUIHosts();
+    public void editHost(String name, String addr, String newAddr) throws HostRunTimeException{
+        if(!this.hostsMap.containsKey(addr)){
+            Host host = this.hostsMap.get(addr);
+            host.setName(name);
+            host.setAddr(newAddr);
+    
+            this.hostsMap.remove(addr);
+            this.hostsMap.put(newAddr, host);
+            this.updateGUIHosts();
+        }
+        else{
+            throw new HostRunTimeException("That address is already taken");
+        }
     }
 
     public void removeHost(String addr){ 

@@ -5,6 +5,7 @@ import javax.swing.JScrollPane;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -15,6 +16,7 @@ import java.awt.BorderLayout;
 
 import Controller.Controller;
 import Model.Observers.TransferencesObserver;
+import View.MainWindow;
 
 public  class TransferencesPanel extends JPanel implements TransferencesObserver{
 
@@ -25,11 +27,14 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
     private final int MAX_WIDTH = 530;
 
     private Controller controller;
+
+    private MainWindow parent;
     private JPanel transferencesContentPanel;
 
     private HashMap<String, TransferenceControlPanel> clientTransferencesMap, serverTransferencesMap;
 
-    public TransferencesPanel(Controller controller){
+    public TransferencesPanel(Controller controller, MainWindow parent){
+        this.parent = parent;
         this.clientTransferencesMap = new HashMap<String, TransferenceControlPanel>();
         this.serverTransferencesMap = new HashMap<String, TransferenceControlPanel>();
         this.controller = controller;
@@ -102,6 +107,11 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
         else{
             this.updateTransferenceContent();
         }
+    }
+
+    @Override
+    public void notifyException(String message) {
+        JOptionPane.showOptionDialog(this.parent, message, "Error", JOptionPane.PLAIN_MESSAGE, JOptionPane.WARNING_MESSAGE, null, null, null); 
     }
 
     private void updateTransferenceContent(){

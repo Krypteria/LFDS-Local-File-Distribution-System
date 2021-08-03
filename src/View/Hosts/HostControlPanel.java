@@ -14,6 +14,7 @@ import java.awt.Dimension;
 import java.awt.Color;
 import Controller.Controller;
 import Model.Host;
+import Model.Exceptions.HostRunTimeException;
 import View.FileManagmentPanel;
 import View.MainWindow;
 import View.Dialogs.EditHostDialog;
@@ -26,14 +27,14 @@ public class HostControlPanel extends JPanel{
     private JCheckBox sendBox;
 
     private Controller controller;
-    private MainWindow parentFrame;
+    private MainWindow parent;
     private FileManagmentPanel fileManagmentPanel;
 
     public HostControlPanel(Controller controller, MainWindow parent, Host host, JCheckBox sendBox, FileManagmentPanel fileManagmentPanel){
         this.fileManagmentPanel = fileManagmentPanel;
         this.controller = controller;
         this.sendBox = sendBox;
-        this.parentFrame = parent;
+        this.parent = parent;
         this.initGUI(host);
     }
 
@@ -85,18 +86,23 @@ public class HostControlPanel extends JPanel{
 
     private void performDeleteAction(){ 
         String text = "Do you want to delete " + this.hostNameLabel.getText() + this.hostAddrLabel.getText() + "?";
-        int status = JOptionPane.showOptionDialog(this.parentFrame, text, "Delete", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, null, null);
+        int status = JOptionPane.showOptionDialog(this.parent, text, "Delete", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, null, null);
         if(status == 0){
             this.controller.removeHost(this.hostAddrLabel.getText());
         }
     }
 
     private void performEditAction(){ 
-        EditHostDialog dialog = new EditHostDialog(this.parentFrame, this.hostNameLabel.getText(), this.hostAddrLabel.getText());
-        int status = dialog.open();
-
-        if(status == 1){
-            controller.editHost(dialog.getHostName(), this.hostAddrLabel.getText(), dialog.getHostAddr());
+        try{
+            EditHostDialog dialog = new EditHostDialog(this.parent, this.hostNameLabel.getText(), this.hostAddrLabel.getText());
+            int status = dialog.open();
+    
+            if(status == 1){
+                controller.editHost(dialog.getHostName(), this.hostAddrLabel.getText(), dialog.getHostAddr());
+            }
+        }
+        catch(HostRunTimeException e){
+            JOptionPane.showOptionDialog(this.parent, e.getMessage(), "Error", JOptionPane.PLAIN_MESSAGE, JOptionPane.WARNING_MESSAGE, null, null, null);            
         }
     }
 

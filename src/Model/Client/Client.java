@@ -19,11 +19,10 @@ public class Client implements Runnable{
     }
 
     @Override
-    public void run() {
+    public void run(){
         this.networking.send(this.file);
         this.clientsManager.removeClient(this.dst_addr);
     }
-
 
     //Observer methods
     public void addTransferenceObserver(TransferencesObserver observer){

@@ -2,6 +2,7 @@ package View.Hosts;
 
 import Controller.Controller;
 import Model.Host;
+import Model.Exceptions.HostRunTimeException;
 import Model.Observers.HostsObserver;
 import View.FileManagmentPanel;
 import View.MainWindow;
@@ -13,6 +14,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -30,13 +32,13 @@ public class HostsPanel extends JPanel implements HostsObserver{
     private JPanel hostsContentPanel;
     
     private Controller controller;
-    private MainWindow parentFrame;
+    private MainWindow parent;
     private FileManagmentPanel fileManagmentPanel;
 
-    public HostsPanel(Controller controller, MainWindow parentFrame, FileManagmentPanel fileManagmentPanel){
+    public HostsPanel(Controller controller, MainWindow parent, FileManagmentPanel fileManagmentPanel){
         this.fileManagmentPanel = fileManagmentPanel;
         this.controller = controller;
-        this.parentFrame = parentFrame;
+        this.parent = parent;
         this.hostsContentPanel = new JPanel();
         
         this.controller.addObserver(this);
@@ -73,11 +75,16 @@ public class HostsPanel extends JPanel implements HostsObserver{
     }
     
     private void performAddAction(){
-        AddHostDialog dialog = new AddHostDialog(this.parentFrame);
-        int status = dialog.open();
-
-        if(status == 1){
-            controller.addNewHost(dialog.getHostName(), dialog.getHostAddr());
+        try{
+            AddHostDialog dialog = new AddHostDialog(this.parent);
+            int status = dialog.open();
+    
+            if(status == 1){
+                controller.addNewHost(dialog.getHostName(), dialog.getHostAddr());
+            }
+        }
+        catch(HostRunTimeException e){
+            JOptionPane.showOptionDialog(this.parent, e.getMessage(), "Error", JOptionPane.PLAIN_MESSAGE, JOptionPane.WARNING_MESSAGE, null, null, null);            
         }
     }
 
@@ -93,7 +100,7 @@ public class HostsPanel extends JPanel implements HostsObserver{
             JCheckBox checkBox = new JCheckBox("Send");
             checkBox.setBackground(this.backgroundColor);
 
-            hostControlPanel.add(new HostControlPanel(this.controller, this.parentFrame, host, checkBox, this.fileManagmentPanel));
+            hostControlPanel.add(new HostControlPanel(this.controller, this.parent, host, checkBox, this.fileManagmentPanel));
         }
         JScrollPane scrollPane = new JScrollPane(hostControlPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());

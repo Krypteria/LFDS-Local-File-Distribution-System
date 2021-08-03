@@ -6,11 +6,11 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import Controller.Controller;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -141,18 +141,18 @@ public class FileManagmentPanel extends JPanel{
         if(!this.selectedHostMap.isEmpty()){
             if(this.selectedFile != null){
                 for(Map.Entry<String, String> mapElement : this.selectedHostMap.entrySet()) {
-                    String address = mapElement.getKey();                    
+                    String address = mapElement.getKey();   
                     controller.sendFile(address, selectedFile);                   
                 }
                 this.selectedFileLabel.setText("");
                 this.removeAllSelectedHosts(); 
             }
             else{
-                System.out.println("Fichero invalido");
+                JOptionPane.showOptionDialog(this.parent, "Please, select a file", "Error", JOptionPane.PLAIN_MESSAGE, JOptionPane.WARNING_MESSAGE, null, null, null); 
             }
         }
         else{
-            System.out.println("Ningun destinatario seleccionado");
+            JOptionPane.showOptionDialog(this.parent, "You need to select at least one receiver", "Error", JOptionPane.PLAIN_MESSAGE, JOptionPane.WARNING_MESSAGE, null, null, null); 
         }
     }
 

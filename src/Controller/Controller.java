@@ -3,6 +3,7 @@ package Controller;
 import java.io.File;
 
 import Model.Local_distribution_system;
+import Model.Exceptions.HostRunTimeException;
 import Model.Exceptions.ServerRunTimeException;
 import Model.Observers.HostsObserver;
 import Model.Observers.ServerObserver;
@@ -56,11 +57,11 @@ public class Controller{
     }
 
     //Other methods
-    public void editHost(String name, String addr, String newAddr){
+    public void editHost(String name, String addr, String newAddr) throws HostRunTimeException{
         this.localDistributionSystem.editHost(name, addr, newAddr);
     }
 
-    public void addNewHost(String name, String addr){
+    public void addNewHost(String name, String addr) throws HostRunTimeException{
         this.localDistributionSystem.addNewHost(name, addr);
     }
 
