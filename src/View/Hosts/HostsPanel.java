@@ -26,7 +26,6 @@ public class HostsPanel extends JPanel implements HostsObserver{
     private final Color backgroundColor = Color.white;
 
     private JButton addHostButton;
-    private JButton seeIPAddressButton;
 
     private JPanel hostsContentPanel;
     
@@ -50,7 +49,6 @@ public class HostsPanel extends JPanel implements HostsObserver{
         this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createMatteBorder(2,2,2,2, Color.gray),"Hosts"));
 
         this.addHostButton = new JButton("Add new host");
-        this.seeIPAddressButton = new JButton("See IP Address");
 
         this.addHostButton.addActionListener(new ActionListener(){
             @Override
@@ -59,17 +57,10 @@ public class HostsPanel extends JPanel implements HostsObserver{
             }
         });
 
-        this.seeIPAddressButton.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                performSeeIPAddressAction();
-            }
-        });
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         buttonsPanel.setBackground(this.backgroundColor);
         buttonsPanel.setBorder(BorderFactory.createMatteBorder(1,1,1,1, Color.gray));
         buttonsPanel.add(this.addHostButton);
-        buttonsPanel.add(this.seeIPAddressButton);
 
         this.hostsContentPanel.setLayout(new BoxLayout(this.hostsContentPanel, BoxLayout.PAGE_AXIS));
         this.hostsContentPanel.setBorder(BorderFactory.createMatteBorder(1,1,1,1, Color.gray));
@@ -89,10 +80,6 @@ public class HostsPanel extends JPanel implements HostsObserver{
             controller.addNewHost(dialog.getHostName(), dialog.getHostAddr());
         }
     }
-
-    private void performSeeIPAddressAction(){
-
-    } 
 
     @Override
     public void updateAllHosts(List<Host> hostList) {

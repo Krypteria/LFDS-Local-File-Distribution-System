@@ -19,6 +19,7 @@ import Controller.Controller;
 import Model.Exceptions.ServerRunTimeException;
 import Model.Observers.ServerObserver;
 import View.Dialogs.ChangeDefaultRouteDialog;
+import View.Dialogs.ShowAddressDialog;
 
 public class ServerPanel extends JPanel implements ServerObserver{
     
@@ -32,6 +33,7 @@ public class ServerPanel extends JPanel implements ServerObserver{
     private final String STOPPED = "Stopped";
 
     private String downloadRoute;
+    private String currentAddress;
 
     private Controller controller;
     private MainWindow parent;
@@ -40,6 +42,7 @@ public class ServerPanel extends JPanel implements ServerObserver{
     private JButton closeServerButton;
     private JButton resetServerButton;
     private JButton changeDefaultDownloadRouteButton;
+    private JButton seeAddressButton;
     
     private JLabel serverStatusLabel;
     private JLabel serverPortLabel;
@@ -115,10 +118,11 @@ public class ServerPanel extends JPanel implements ServerObserver{
         taskPanel.add(secondTaskPanel, BorderLayout.LINE_START);
 
         //Control Panel
-        this.openServerButton = new JButton("Open");
-        this.closeServerButton = new JButton("Close");
-        this.resetServerButton = new JButton("Reset");
+        this.openServerButton = new JButton("O");
+        this.closeServerButton = new JButton("C");
+        this.resetServerButton = new JButton("R");
         this.changeDefaultDownloadRouteButton = new JButton("Change");
+        this.seeAddressButton = new JButton("IP");
 
         this.openServerButton.setEnabled(false);
 
@@ -150,10 +154,18 @@ public class ServerPanel extends JPanel implements ServerObserver{
             }
         });
 
+        this.seeAddressButton.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                performSeeAddressAction();
+            }
+        });
+
         controlPanel.add(this.openServerButton);
         controlPanel.add(this.resetServerButton);
         controlPanel.add(this.closeServerButton);
         controlPanel.add(this.changeDefaultDownloadRouteButton);
+        controlPanel.add(this.seeAddressButton);
 
         this.add(statusPanel, BorderLayout.PAGE_START);
         this.add(taskPanel, BorderLayout.CENTER);
@@ -203,6 +215,11 @@ public class ServerPanel extends JPanel implements ServerObserver{
         }
     }
 
+    private void performSeeAddressAction(){
+        ShowAddressDialog dialog = new ShowAddressDialog(this.parent, this.currentAddress);
+        dialog.open();
+    }
+
     @Override
     public void updateStatus(String newStatus, int newPort) {
         this.serverStatusLabel.setText(newStatus);
@@ -231,5 +248,10 @@ public class ServerPanel extends JPanel implements ServerObserver{
     @Override
     public void getDefaultDownloadRoute(String route) {
        this.downloadRoute = route;
+    }
+
+    @Override
+    public void getCurrentAddress(String address) {
+        this.currentAddress = address;
     }
 }

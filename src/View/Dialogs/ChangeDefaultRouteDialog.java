@@ -50,7 +50,7 @@ public class ChangeDefaultRouteDialog extends JDialog {
         this.routeArea = new JTextArea(this.DownloadRoute);
         this.routeArea.setEditable(false);
 
-        this.routeArea.setPreferredSize(new Dimension(250,20));
+        this.routeArea.setPreferredSize(new Dimension(350,20));
         this.routeArea.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.black));
 
         this.routeButton = new JButton("Select new default route");

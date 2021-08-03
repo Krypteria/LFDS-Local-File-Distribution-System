@@ -1,5 +1,6 @@
 package Model;
 
+import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -53,16 +54,20 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
     private DataOutputStream output;
     private DataInputStream input;
 
+    private String currentAddress;
+
     private boolean avalaible;
     private boolean endServerActivity;
 
     private long totalFileSize; 
+
 
     public Server(){
         try{
             this.totalFileSize = 0;
             this.avalaible = true;
             this.endServerActivity = false;
+            this.currentAddress = Inet4Address.getLocalHost().getHostAddress();
             this.defaultRoute = FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath();
 
             this.serverSocket = new ServerSocket(this.PORT);
@@ -246,6 +251,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
     public void addObserver(ServerObserver observer) {
         this.serverObserversList.add(observer);
         observer.getDefaultDownloadRoute(this.defaultRoute);
+        observer.getCurrentAddress(this.currentAddress);
     }
 
     private void notifyObservers(String status, int port, String task){
