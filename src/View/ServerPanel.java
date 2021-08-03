@@ -23,14 +23,19 @@ import View.Dialogs.ShowAddressDialog;
 
 public class ServerPanel extends JPanel implements ServerObserver{
     
-    private final int MAX_WIDTH = 300;
-    
-    private final Color backgroundColor = Color.white;
     private static final float [] greenColor = Color.RGBtoHSB(28, 150, 78, null); 
 	private static final float [] redColor = Color.RGBtoHSB(160, 21, 21, null); 
-
+    
+    private final Color backgroundColor = Color.white;
+    private final int MAX_WIDTH = 300;
+    
     private final String RUNNING = "Running";
     private final String STOPPED = "Stopped";
+
+    private final String WAITING = "Waiting for transferences";
+    private final String CLOSED = "Server closed, transferences disabled";
+    private final String BUSY = "Managing transferences";
+
 
     private String downloadRoute;
     private String currentAddress;
@@ -47,8 +52,8 @@ public class ServerPanel extends JPanel implements ServerObserver{
     private JLabel serverStatusLabel;
     private JLabel serverPortLabel;
     
-    private JLabel serverTaskTitleLabel;
-    private JLabel serverTaskInfoLabel;
+    private JLabel taskTitleLabel;
+    private JLabel taskInfoLabel;
     
     public ServerPanel(Controller controller, MainWindow parent){
         this.parent = parent;
@@ -108,11 +113,11 @@ public class ServerPanel extends JPanel implements ServerObserver{
         secondTaskPanel.setPreferredSize(new Dimension(MAX_WIDTH, 40));
         secondTaskPanel.setMaximumSize(new Dimension(MAX_WIDTH, 40));
 
-        this.serverTaskTitleLabel = new JLabel("Tasks");
-        this.serverTaskInfoLabel = new JLabel("Aquí iran las cosas estas");
+        this.taskTitleLabel = new JLabel("Tasks");
+        this.taskInfoLabel = new JLabel("Waiting fo");
 
-        firstTaskPanel.add(this.serverTaskTitleLabel);
-        secondTaskPanel.add(this.serverTaskInfoLabel); //Si permito multi recibo lo que haré será meterlo en un jscrollpane
+        firstTaskPanel.add(this.taskTitleLabel);
+        secondTaskPanel.add(this.taskInfoLabel);
 
         taskPanel.add(firstTaskPanel, BorderLayout.PAGE_START);
         taskPanel.add(secondTaskPanel, BorderLayout.LINE_START);
@@ -230,19 +235,15 @@ public class ServerPanel extends JPanel implements ServerObserver{
             this.openServerButton.setEnabled(false);
             this.closeServerButton.setEnabled(true);
             this.resetServerButton.setEnabled(true);
+            this.taskInfoLabel.setText(WAITING);
         }
         else if(newStatus.equals(STOPPED)){
             serverStatusLabel.setForeground(Color.getHSBColor(redColor[0], redColor[1], redColor[2]));
             this.openServerButton.setEnabled(true);
             this.closeServerButton.setEnabled(false);
             this.resetServerButton.setEnabled(false);
+            this.taskInfoLabel.setText(CLOSED);
         }
-    }
-
-    @Override
-    public void updateTaskInfo(String newTask) {
-        // TODO Auto-generated method stub
-        
     }
 
     @Override
@@ -253,5 +254,20 @@ public class ServerPanel extends JPanel implements ServerObserver{
     @Override
     public void getCurrentAddress(String address) {
         this.currentAddress = address;
+    }
+
+    @Override
+    public void enableServerControlls(boolean enable) {
+        if(!enable){
+            this.openServerButton.setEnabled(false);
+            this.resetServerButton.setEnabled(false);
+            this.closeServerButton.setEnabled(false);
+            this.taskInfoLabel.setText(BUSY);
+        }
+        else{
+            this.resetServerButton.setEnabled(true);
+            this.closeServerButton.setEnabled(true);
+            this.taskInfoLabel.setText(WAITING);
+        }
     }
 }

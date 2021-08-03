@@ -1,4 +1,17 @@
 {"configFile": {
    "serverState": {"downloadRoute": "D:\\Biblioteca\\Escritorio\\PruebaRecibo"},
-   "hostManagerState": {"hostsStateArray": []}
+   "hostManagerState": {"hostsStateArray": [
+      {"hostState": {
+         "address": "0.0.0.0",
+         "name": "Localhost"
+      }},
+      {"hostState": {
+         "address": "192.168.56.1",
+         "name": "Sobremesa"
+      }},
+      {"hostState": {
+         "address": "192.168.1.37",
+         "name": "Portatil"
+      }}
+   ]}
 }}

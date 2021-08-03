@@ -37,11 +37,6 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
     //Status info
     private final String RUNNING = "Running";
     private final String STOPPED = "Stopped";
-    
-    //Task info
-    private final String WAITING = "Waiting for transferences";
-    private final String ON_TRANSFER = "Receiving a transference from"; //+<IPsrc>
-    private final String DISABLED = "Disabled, transferences are not allowed";
 
     private String defaultRoute;
 
@@ -62,11 +57,13 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
     private boolean endServerActivity;
 
     private long totalFileSize; 
+    private int numberOfClients;
 
 
     public Server(){
         try{
             this.totalFileSize = 0;
+            this.numberOfClients = 0;
             this.avalaible = true;
             this.endServerActivity = false;
             this.currentAddress = Inet4Address.getLocalHost().getHostAddress();
@@ -86,7 +83,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
     //Server control methods
     public void openServer(){
         new Thread(this).start();
-        this.notifyObservers(RUNNING, PORT, WAITING);
+        this.notifyObservers(RUNNING, PORT);
     }
 
     public void closeServer() throws ServerRunTimeException{ 
@@ -94,7 +91,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
             try {
                 this.serverSocket.close();;
                 this.endServerActivity = true;
-                this.notifyObservers(STOPPED, PORT, DISABLED);
+                this.notifyObservers(STOPPED, PORT);
             } catch (IOException e) {
                 throw new ServerRunTimeException("Error during stop operation");
             }
@@ -132,6 +129,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
         while(!this.endServerActivity){
             try{
                 Socket clientSocket = this.serverSocket.accept();
+                this.numberOfClients++;
                 new Thread() {
                     public void run() {
                         processClientTransference(clientSocket);
@@ -139,6 +137,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
                 }.start();
             }
             catch(IOException e){
+                this.numberOfClients--;
                 throw new ServerRunTimeException("Error waiting for connections");
             }
         }
@@ -147,6 +146,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
     private void processClientTransference(Socket clientSocket) throws ServerRunTimeException{
         this.directoryStack.push(new Pair<String, Integer>(this.defaultRoute, 0));
         this.processHeader(clientSocket, this.receiveHeader(clientSocket));
+        this.numberOfClients--;
     }
 
     private String receiveHeader(Socket clientSocket) throws ServerRunTimeException{
@@ -191,9 +191,15 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
                 this.receiveFile(clientSocket, filePath, fileSize);
             }
         }
-        this.notifyRemoveToTransferenceObservers(src_addr);
+
         this.clearDirectoryStack();
         headerInfo.close();
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            throw new ServerRunTimeException("Error during wait operation");
+        }
+        this.notifyRemoveToTransferenceObservers(src_addr);
 
         try {
             this.output.close();
@@ -256,10 +262,9 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
         observer.getCurrentAddress(this.currentAddress);
     }
 
-    private void notifyObservers(String status, int port, String task){
+    private void notifyObservers(String status, int port){
         for(ServerObserver observer : this.serverObserversList){
             observer.updateStatus(status, port);
-            observer.updateTaskInfo(task);
         }
     }
 
@@ -272,6 +277,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
     private void notifyAddToTransferenceObservers(String fileName, String src_addr){
         for(TransferencesObserver observer : this.transferenceObserversList){
             observer.addTransference(RECEIVE_MODE, src_addr, this.currentAddress, fileName);
+            this.enableServerControlls(false);
         }
     }
 
@@ -284,6 +290,15 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
     private void notifyRemoveToTransferenceObservers(String src_addr){
         for(TransferencesObserver observer : this.transferenceObserversList){
             observer.endTransference(RECEIVE_MODE, src_addr);
+            if(this.numberOfClients == 1){
+                this.enableServerControlls(true);
+            }
+        }
+    }
+
+    private void enableServerControlls(boolean enable){
+        for(ServerObserver observer : this.serverObserversList){
+            observer.enableServerControlls(enable);
         }
     }
 

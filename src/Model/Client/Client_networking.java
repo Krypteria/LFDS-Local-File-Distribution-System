@@ -75,6 +75,13 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
                 this.sendHeader(file.getName(), this.getFileHeader(file, 1));
                 sendFile(file, file.length());
             }
+
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                throw new ClientRunTimeException("Error during wait operation");
+            }
+
             this.notifyRemoveToTransferenceObservers();
 
             try{

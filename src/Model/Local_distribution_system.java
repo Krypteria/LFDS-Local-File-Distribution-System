@@ -111,7 +111,7 @@ public class Local_distribution_system implements UseState{
             JSONObject state = transferObject.getState();
             JSONObject stateContent = state.getJSONObject("configFile");
 
-            if(stateContent.has("hostManangerState")){
+            if(stateContent.has("hostManagerState")){
                 TransferObject hostManagerTransferObject = new TransferObject();
                 JSONObject hostManagerState = stateContent.getJSONObject("hostManagerState");
                 hostManagerTransferObject.setState(hostManagerState);
@@ -133,6 +133,7 @@ public class Local_distribution_system implements UseState{
         JSONObject stateContent = new JSONObject();
         stateContent.put("hostManagerState", this.hostsManager.getState().getState());
         stateContent.put("serverState", this.server.getState().getState());
+
         state.put("configFile", stateContent);
         transferObject.setState(state);
         return transferObject;
