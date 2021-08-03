@@ -4,6 +4,10 @@
       "name": "Localhost"
    }},
    {"hostState": {
+      "address": "192.168.56.1",
+      "name": "Este equipo"
+   }},
+   {"hostState": {
       "address": "192.168.1.39",
       "name": "Portatil"
    }}

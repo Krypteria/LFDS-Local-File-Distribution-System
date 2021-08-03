@@ -1,6 +1,7 @@
 package Model.Client;
 
 import java.net.Socket;
+import java.net.Inet4Address;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -21,30 +22,29 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class Client_networking implements TransferenceObservable<TransferencesObserver>{
-
+    
+    private final String SEND_MODE = "send";
     private final int PORT = 2222;
     private final int BUFFERSIZE = 65536;
 
-    private final String SEND_MODE = "send";
-
-    private List<TransferencesObserver> transferenceObserversList;
     private Socket clientSocket;
     private byte[] buffer;
-
+    
     private DataOutputStream output;
     private DataInputStream input;
     private List<Pair<String, Long>> filePaths;
-
+    
     private String src_addr;
     private String dst_addr;
-
+    
     private long totalFileSize;
     private long totalBytesReaded;
 
+    private List<TransferencesObserver> transferenceObserversList;
+
     public Client_networking(String dst_addr){
         try{
-            this.src_addr = "198.100.200.204"; //VER SI FUNCIONA BIEN
-            System.out.println(src_addr); 
+            this.src_addr = Inet4Address.getLocalHost().getHostAddress();
             this.dst_addr = dst_addr;
 
             this.totalFileSize = 0;
@@ -56,11 +56,11 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
             this.buffer = new byte[this.BUFFERSIZE];
             this.filePaths = new ArrayList<Pair<String, Long>>();
         }
-        catch(UnknownHostException e){ //Gestion de excepciones internas 
-            System.out.println("La IP destino no es válida");
+        catch(UnknownHostException e){
+            System.out.println("Destination address not valid");
         }
         catch(IOException e){
-            System.out.println("Error al enviar el archivo");
+            System.out.println("Error during connection");
         }
     }
 
@@ -161,10 +161,10 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
             }
         }
         catch(FileNotFoundException e){
-            throw new ClientRunTimeException("File not found");
+            throw new ClientRunTimeException("File " + file.getName() + "not found");
         }
         catch(IOException e){
-            throw new ClientRunTimeException("Error while sending the file");
+            throw new ClientRunTimeException("Error while sending the file " + file.getName() + " to " + this.dst_addr);
         }
     }
 

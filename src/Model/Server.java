@@ -269,7 +269,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
 
     private void notifyAddToTransferenceObservers(String fileName, String src_addr){
         for(TransferencesObserver observer : this.transferenceObserversList){
-            observer.addTransference(RECEIVE_MODE, src_addr, this.serverSocket.getInetAddress().toString(), fileName);
+            observer.addTransference(RECEIVE_MODE, src_addr, this.currentAddress, fileName);
         }
     }
 
