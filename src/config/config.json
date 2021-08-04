@@ -3,11 +3,7 @@
    "hostManagerState": {"hostsStateArray": [
       {"hostState": {
          "address": "0.0.0.0",
-         "name": "Localhost"
-      }},
-      {"hostState": {
-         "address": "1.1.1.1",
-         "name": "Test"
+         "name": "Localhost2"
       }},
       {"hostState": {
          "address": "192.168.56.1",

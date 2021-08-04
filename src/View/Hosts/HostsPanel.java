@@ -36,6 +36,8 @@ public class HostsPanel extends JPanel implements HostsObserver{
     private MainWindow parent;
     private FileManagmentPanel fileManagmentPanel;
 
+    private List<Host> hostList;
+
     public HostsPanel(Controller controller, MainWindow parent, FileManagmentPanel fileManagmentPanel){
         this.fileManagmentPanel = fileManagmentPanel;
         this.controller = controller;
@@ -82,6 +84,7 @@ public class HostsPanel extends JPanel implements HostsObserver{
     
             if(status == 1){
                 controller.addNewHost(dialog.getHostName(), dialog.getHostAddr());
+                fileManagmentPanel.removeAllSelectedHosts();
             }
         }
         catch(HostRunTimeException e){
@@ -91,6 +94,11 @@ public class HostsPanel extends JPanel implements HostsObserver{
 
     @Override
     public void updateAllHosts(List<Host> hostList) {
+        this.hostList = hostList;
+        this.updateHostGUI();
+    }
+
+    private void updateHostGUI(){
         this.hostsContentPanel.removeAll();
 
         JPanel hostControlPanel = new JPanel();
@@ -110,4 +118,6 @@ public class HostsPanel extends JPanel implements HostsObserver{
         this.hostsContentPanel.validate();
         this.hostsContentPanel.repaint();
     }
+
+    //Guardar los hosts en un mapa, cuando un host ha recibido el fichero se vuelve a habilitar todo -> disableOptions(boolean mode)
 }

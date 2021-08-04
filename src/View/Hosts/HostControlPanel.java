@@ -93,6 +93,7 @@ public class HostControlPanel extends JPanel{
         int status = JOptionPane.showOptionDialog(this.parent, text, "Delete", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, null, null);
         if(status == 0){
             this.controller.removeHost(this.hostAddrLabel.getText());
+            fileManagmentPanel.removeAllSelectedHosts();
         }
     }
 
@@ -103,6 +104,7 @@ public class HostControlPanel extends JPanel{
     
             if(status == 1){
                 controller.editHost(dialog.getHostName(), this.hostAddrLabel.getText(), dialog.getHostAddr());
+                fileManagmentPanel.removeAllSelectedHosts();
             }
         }
         catch(HostRunTimeException e){

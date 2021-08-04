@@ -2,7 +2,6 @@ package View;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -49,18 +48,13 @@ public class ServerPanel extends JPanel implements ServerObserver{
     private Controller controller;
     private MainWindow parent;
 
-    /*private CustomButton openServerButton;
+    private CustomButton openServerButton;
     private CustomButton closeServerButton;
     private CustomButton resetServerButton;
     private CustomButton changeDefaultDownloadRouteButton;
-    private CustomButton seeAddressButton;*/
+    private CustomButton seeAddressButton;
 
-    private JButton openServerButton;
-    private JButton closeServerButton;
-    private JButton resetServerButton;
-    private JButton changeDefaultDownloadRouteButton;
-    private JButton seeAddressButton;
-    
+
     private JLabel serverStatusLabel;
     private JLabel serverPortLabel;
     
@@ -140,18 +134,6 @@ public class ServerPanel extends JPanel implements ServerObserver{
         this.resetServerButton = new ResetServerButton(this.controller);
         this.changeDefaultDownloadRouteButton = new ChangeRouteButton(this.controller);
         this.seeAddressButton = new ShowIPAddressButton(this.controller);
-
-        /*this.openServerButton = new JButton();
-        this.closeServerButton = new JButton();
-        this.resetServerButton = new JButton();
-        this.changeDefaultDownloadRouteButton = new JButton();
-        this.seeAddressButton = new JButton();
-
-        this.openServerButton.setPreferredSize(new Dimension(40,40));
-        this.closeServerButton.setPreferredSize(new Dimension(40,40));
-        this.resetServerButton.setPreferredSize(new Dimension(40,40));
-        this.changeDefaultDownloadRouteButton.setPreferredSize(new Dimension(40,40));
-        this.seeAddressButton.setPreferredSize(new Dimension(40,40));*/
 
         this.openServerButton.setEnabled(false);
 

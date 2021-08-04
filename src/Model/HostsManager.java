@@ -33,7 +33,7 @@ public class HostsManager implements Observable<HostsObserver>, UseState{
     }
 
     public void editHost(String name, String addr, String newAddr) throws HostRunTimeException{
-        if(!this.hostsMap.containsKey(addr)){
+        if(addr.equals(newAddr) || !this.hostsMap.containsKey(newAddr)){
             Host host = this.hostsMap.get(addr);
             host.setName(name);
             host.setAddr(newAddr);
