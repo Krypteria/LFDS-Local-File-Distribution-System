@@ -46,9 +46,7 @@ public class MainWindow extends JFrame{
         FileManagmentPanel fileManagmentPanel = new FileManagmentPanel(this.controller, this);
         HostsPanel hostsPanel = new HostsPanel(this.controller, this, fileManagmentPanel);
         ServerPanel serverPanel = new ServerPanel(this.controller, this);
-        TransferencesPanel transferencePanel = new TransferencesPanel(this.controller, this);
-
-        fileManagmentPanel.addHostPanel(hostsPanel);
+        TransferencesPanel transferencePanel = new TransferencesPanel(this.controller, this, hostsPanel);
 
         setJPanelLayoutConfig(hostsPanel, constraints, 0, 0, 1, 1, true);
         setJPanelLayoutConfig(serverPanel, constraints, 1, 1, 1, 1, true);

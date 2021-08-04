@@ -17,6 +17,7 @@ import java.awt.BorderLayout;
 import Controller.Controller;
 import Model.Observers.TransferencesObserver;
 import View.MainWindow;
+import View.Hosts.HostsPanel;
 
 public  class TransferencesPanel extends JPanel implements TransferencesObserver{
 
@@ -29,12 +30,15 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
     private Controller controller;
 
     private MainWindow parent;
+    private HostsPanel hostsPanel;
+
     private JPanel transferencesContentPanel;
 
     private HashMap<String, TransferenceControlPanel> clientTransferencesMap, serverTransferencesMap;
 
-    public TransferencesPanel(Controller controller, MainWindow parent){
+    public TransferencesPanel(Controller controller, MainWindow parent, HostsPanel hostsPanel){
         this.parent = parent;
+        this.hostsPanel = hostsPanel;
         this.clientTransferencesMap = new HashMap<String, TransferenceControlPanel>();
         this.serverTransferencesMap = new HashMap<String, TransferenceControlPanel>();
         this.controller = controller;
@@ -74,6 +78,7 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
     @Override
     public void addTransference(String mode, String src_addr, String dst_addr, String fileName) {
         if(mode.equals(SEND_MODE)){
+            this.hostsPanel.enableHostOptions(src_addr, false);
             this.clientTransferencesMap.put(dst_addr, new TransferenceControlPanel("Sending", src_addr, dst_addr, fileName));
         }
         else if(mode.equals(RECEIVE_MODE)){
@@ -95,6 +100,7 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
     @Override
     public void endTransference(String mode, String addr) {
         if(mode.equals(SEND_MODE)){
+            this.hostsPanel.enableHostOptions(addr, true);
             this.clientTransferencesMap.remove(addr);
         }
         else if(mode.equals(RECEIVE_MODE)){

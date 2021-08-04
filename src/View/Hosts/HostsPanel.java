@@ -22,6 +22,7 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.List;
 
 public class HostsPanel extends JPanel implements HostsObserver{
@@ -37,8 +38,10 @@ public class HostsPanel extends JPanel implements HostsObserver{
     private FileManagmentPanel fileManagmentPanel;
 
     private List<Host> hostList;
+    private HashMap<String, HostControlPanel> hostPanelMap;
 
     public HostsPanel(Controller controller, MainWindow parent, FileManagmentPanel fileManagmentPanel){
+        this.hostPanelMap = new HashMap<String, HostControlPanel>();
         this.fileManagmentPanel = fileManagmentPanel;
         this.controller = controller;
         this.parent = parent;
@@ -100,6 +103,7 @@ public class HostsPanel extends JPanel implements HostsObserver{
 
     private void updateHostGUI(){
         this.hostsContentPanel.removeAll();
+        this.hostPanelMap.clear();
 
         JPanel hostControlPanel = new JPanel();
         hostControlPanel.setLayout(new BoxLayout(hostControlPanel, BoxLayout.PAGE_AXIS)); 
@@ -109,7 +113,10 @@ public class HostsPanel extends JPanel implements HostsObserver{
             JCheckBox checkBox = new JCheckBox("Send");
             checkBox.setBackground(this.backgroundColor);
 
-            hostControlPanel.add(new HostControlPanel(this.controller, this.parent, host, checkBox, this.fileManagmentPanel));
+            HostControlPanel hostPanel = new HostControlPanel(this.controller, this.parent, host, checkBox, this.fileManagmentPanel);
+            
+            this.hostPanelMap.put(host.getAddress(), hostPanel);
+            hostControlPanel.add(hostPanel);
         }
         JScrollPane scrollPane = new JScrollPane(hostControlPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
@@ -119,5 +126,8 @@ public class HostsPanel extends JPanel implements HostsObserver{
         this.hostsContentPanel.repaint();
     }
 
-    //Guardar los hosts en un mapa, cuando un host ha recibido el fichero se vuelve a habilitar todo -> disableOptions(boolean mode)
+    public void enableHostOptions(String address, boolean enable){
+        this.hostPanelMap.get(address).enableHostOptions(enable);
+    }
+
 }

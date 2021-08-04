@@ -124,4 +124,13 @@ public class HostControlPanel extends JPanel{
             this.fileManagmentPanel.removeSelectedHost(this.hostAddrLabel.getText());
         }
     }
+
+    public void enableHostOptions(boolean enable){
+        this.editHostButton.setEnabled(enable);
+        this.deleteHostButton.setEnabled(enable);
+        this.sendBox.setEnabled(enable);
+        if(enable){
+            this.sendBox.setSelected(false);
+        }
+    }
 }

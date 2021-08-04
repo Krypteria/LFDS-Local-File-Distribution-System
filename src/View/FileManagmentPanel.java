@@ -12,7 +12,6 @@ import javax.swing.JScrollPane;
 
 import Controller.Controller;
 import View.Buttons.SendFileButton;
-import View.Hosts.HostsPanel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -42,7 +41,6 @@ public class FileManagmentPanel extends JPanel{
     private JPanel secondReceiversPanel;
 
     private HashMap<String, String> selectedHostMap;
-    private HostsPanel hostsPanel;
     
     public FileManagmentPanel(Controller controller, MainWindow parent){
         this.selectedHostMap = new HashMap<String, String>();
@@ -50,10 +48,6 @@ public class FileManagmentPanel extends JPanel{
         this.controller = controller;
         this.parent = parent;
         this.initGUI();
-    }
-
-    public void addHostPanel(HostsPanel hostsPanel){
-        this.hostsPanel = hostsPanel;
     }
 
     private void initGUI(){
