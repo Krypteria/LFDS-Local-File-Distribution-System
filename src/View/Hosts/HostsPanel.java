@@ -15,10 +15,12 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -108,6 +110,21 @@ public class HostsPanel extends JPanel implements HostsObserver{
         JPanel hostControlPanel = new JPanel();
         hostControlPanel.setLayout(new BoxLayout(hostControlPanel, BoxLayout.PAGE_AXIS)); 
         hostControlPanel.setBackground(this.backgroundColor);
+
+        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        titlePanel.setMaximumSize(new Dimension(500,50));
+        titlePanel.setPreferredSize(new Dimension(500,50));
+        titlePanel.setBackground(Color.white);
+
+        JLabel nameLabel = new JLabel("Contact name");
+        JLabel addressLabel = new JLabel("IP address");
+        nameLabel.setPreferredSize(new Dimension(120,50));
+        addressLabel.setPreferredSize(new Dimension(100,50));
+
+        titlePanel.add(nameLabel);
+        titlePanel.add(addressLabel);
+
+        hostControlPanel.add(titlePanel);
 
         for (Host host : hostList) {
             JCheckBox checkBox = new JCheckBox("Send");
