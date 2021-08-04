@@ -15,6 +15,7 @@ public class TransferenceControlPanel extends JPanel{
     private final Color backgroundColor = Color.white;
     private static final float [] greenColor = Color.RGBtoHSB(28, 150, 78, null); 
 	private static final float [] redColor = Color.RGBtoHSB(160, 21, 21, null); 
+    private final int MAX_WIDTH = 500;
 
     private JProgressBar progressBar;
     private JLabel src_addrLabel;
@@ -56,10 +57,10 @@ public class TransferenceControlPanel extends JPanel{
         JPanel modeInfo = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JPanel headerInfo = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JPanel contentInfo = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        modeInfo.setPreferredSize(new Dimension(530,30));
-        modeInfo.setMaximumSize(new Dimension(530,30));
-        headerInfo.setMaximumSize(new Dimension(530,22));
-        contentInfo.setMaximumSize(new Dimension(530,22));
+        modeInfo.setPreferredSize(new Dimension(MAX_WIDTH,30));
+        modeInfo.setMaximumSize(new Dimension(MAX_WIDTH,30));
+        headerInfo.setMaximumSize(new Dimension(MAX_WIDTH,22));
+        contentInfo.setMaximumSize(new Dimension(MAX_WIDTH,22));
 
         modeInfo.setBackground(this.backgroundColor);
         headerInfo.setBackground(this.backgroundColor);

@@ -1,4 +1,7 @@
 {"configFile": {
    "serverState": {"downloadRoute": "D:\\Biblioteca\\Escritorio\\PruebaRecibo"},
-   "hostManagerState": {"hostsStateArray": []}
+   "hostManagerState": {"hostsStateArray": [{"hostState": {
+      "address": "0.0.0.0",
+      "name": "Localhost"
+   }}]}
 }}
