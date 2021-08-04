@@ -17,6 +17,8 @@ import Model.Host;
 import Model.Exceptions.HostRunTimeException;
 import View.FileManagmentPanel;
 import View.MainWindow;
+import View.Buttons.DeleteButton;
+import View.Buttons.EditButton;
 import View.Dialogs.EditHostDialog;
 
 public class HostControlPanel extends JPanel{
@@ -44,8 +46,8 @@ public class HostControlPanel extends JPanel{
         this.hostNameLabel = new JLabel(host.getName());
         this.hostAddrLabel = new JLabel(host.getAddress());
 
-        this.deleteHostButton = new JButton("Delete");
-        this.editHostButton = new JButton("Edit");
+        this.deleteHostButton = new DeleteButton(this.controller);
+        this.editHostButton = new EditButton(this.controller);
 
         this.deleteHostButton.addActionListener(new ActionListener(){
             @Override
@@ -73,8 +75,10 @@ public class HostControlPanel extends JPanel{
 
         this.add(hostNameLabel);
         this.add(hostAddrLabel);
-        this.add(Box.createRigidArea(new Dimension(5,0)));
+        this.add(Box.createRigidArea(new Dimension(15,0)));
         this.add(this.sendBox);
+        this.add(Box.createRigidArea(new Dimension(5,0)));
+
         this.add(this.editHostButton);
         this.add(this.deleteHostButton);
 
@@ -85,7 +89,7 @@ public class HostControlPanel extends JPanel{
     }
 
     private void performDeleteAction(){ 
-        String text = "Do you want to delete " + this.hostNameLabel.getText() + this.hostAddrLabel.getText() + "?";
+        String text = "Do you want to delete " + this.hostNameLabel.getText() + " " + this.hostAddrLabel.getText() + "?";
         int status = JOptionPane.showOptionDialog(this.parent, text, "Delete", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, null, null);
         if(status == 0){
             this.controller.removeHost(this.hostAddrLabel.getText());

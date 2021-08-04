@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import Controller.Controller;
+import View.Buttons.SendFileButton;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -64,7 +66,7 @@ public class FileManagmentPanel extends JPanel{
             }
         });
        
-        this.sendButton = new JButton("Send");
+        this.sendButton = new SendFileButton(this.controller);
         this.sendButton.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -180,8 +182,8 @@ public class FileManagmentPanel extends JPanel{
 
         for(Map.Entry<String, String> mapElement : this.selectedHostMap.entrySet()) {
             JPanel selectedHostPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            selectedHostPanel.setMaximumSize(new Dimension(MAX_WIDTH, 28));
-            selectedHostPanel.setPreferredSize(new Dimension(MAX_WIDTH, 28));
+            selectedHostPanel.setMaximumSize(new Dimension(MAX_WIDTH, 29));
+            selectedHostPanel.setPreferredSize(new Dimension(MAX_WIDTH, 29));
             selectedHostPanel.setBackground(this.backgroundColor);
             selectedHostPanel.setVisible(true);
 

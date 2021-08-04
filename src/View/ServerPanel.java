@@ -18,6 +18,12 @@ import java.awt.event.ActionListener;
 import Controller.Controller;
 import Model.Exceptions.ServerRunTimeException;
 import Model.Observers.ServerObserver;
+import View.Buttons.ChangeRouteButton;
+import View.Buttons.CloseServerButton;
+import View.Buttons.CustomButton;
+import View.Buttons.OpenServerButton;
+import View.Buttons.ResetServerButton;
+import View.Buttons.ShowIPAddressButton;
 import View.Dialogs.ChangeDefaultRouteDialog;
 import View.Dialogs.ShowAddressDialog;
 
@@ -42,6 +48,12 @@ public class ServerPanel extends JPanel implements ServerObserver{
 
     private Controller controller;
     private MainWindow parent;
+
+    /*private CustomButton openServerButton;
+    private CustomButton closeServerButton;
+    private CustomButton resetServerButton;
+    private CustomButton changeDefaultDownloadRouteButton;
+    private CustomButton seeAddressButton;*/
 
     private JButton openServerButton;
     private JButton closeServerButton;
@@ -114,7 +126,7 @@ public class ServerPanel extends JPanel implements ServerObserver{
         secondTaskPanel.setMaximumSize(new Dimension(MAX_WIDTH, 40));
 
         this.taskTitleLabel = new JLabel("Tasks");
-        this.taskInfoLabel = new JLabel("Waiting fo");
+        this.taskInfoLabel = new JLabel(WAITING);
 
         firstTaskPanel.add(this.taskTitleLabel);
         secondTaskPanel.add(this.taskInfoLabel);
@@ -123,11 +135,23 @@ public class ServerPanel extends JPanel implements ServerObserver{
         taskPanel.add(secondTaskPanel, BorderLayout.LINE_START);
 
         //Control Panel
-        this.openServerButton = new JButton("O");
-        this.closeServerButton = new JButton("C");
-        this.resetServerButton = new JButton("R");
-        this.changeDefaultDownloadRouteButton = new JButton("Change");
-        this.seeAddressButton = new JButton("IP");
+        this.openServerButton = new OpenServerButton(this.controller);
+        this.closeServerButton = new CloseServerButton(this.controller);
+        this.resetServerButton = new ResetServerButton(this.controller);
+        this.changeDefaultDownloadRouteButton = new ChangeRouteButton(this.controller);
+        this.seeAddressButton = new ShowIPAddressButton(this.controller);
+
+        /*this.openServerButton = new JButton();
+        this.closeServerButton = new JButton();
+        this.resetServerButton = new JButton();
+        this.changeDefaultDownloadRouteButton = new JButton();
+        this.seeAddressButton = new JButton();
+
+        this.openServerButton.setPreferredSize(new Dimension(40,40));
+        this.closeServerButton.setPreferredSize(new Dimension(40,40));
+        this.resetServerButton.setPreferredSize(new Dimension(40,40));
+        this.changeDefaultDownloadRouteButton.setPreferredSize(new Dimension(40,40));
+        this.seeAddressButton.setPreferredSize(new Dimension(40,40));*/
 
         this.openServerButton.setEnabled(false);
 

@@ -194,11 +194,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
 
         this.clearDirectoryStack();
         headerInfo.close();
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            throw new ServerRunTimeException("Error during wait operation");
-        }
+    
         this.notifyRemoveToTransferenceObservers(src_addr);
 
         try {

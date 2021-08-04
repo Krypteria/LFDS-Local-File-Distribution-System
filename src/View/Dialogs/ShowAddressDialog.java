@@ -13,7 +13,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 
 import javax.swing.JPanel;
-import java.awt.Color;
 
 import View.MainWindow;
 
@@ -50,19 +49,24 @@ public class ShowAddressDialog extends JDialog {
         });
 
         JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayout(1,1));
+        mainPanel.setLayout(new GridLayout(2,1));
 
         JPanel p0 = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel p1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
         p0.setPreferredSize(new Dimension(500, 50));
+        p1.setPreferredSize(new Dimension(500, 50));
         
         p0.add(this.addressLabel);
         p0.add(Box.createRigidArea(new Dimension(10,0)));
         p0.add(this.addressTextLabel);
+
+        p1.add(this.okButton);
         
         mainPanel.add(p0);
+        mainPanel.add(p1);
 
         this.add(mainPanel);
-        this.setMinimumSize(new Dimension(400,70));
+        this.setMinimumSize(new Dimension(400,120));
         this.setResizable(false);
         this.setTitle("Current IP address");
         this.setLocationRelativeTo(this.parent);

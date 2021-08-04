@@ -6,6 +6,7 @@ import Model.Exceptions.HostRunTimeException;
 import Model.Observers.HostsObserver;
 import View.FileManagmentPanel;
 import View.MainWindow;
+import View.Buttons.AddHostButton;
 import View.Dialogs.AddHostDialog;
 
 import javax.swing.JPanel;
@@ -50,7 +51,7 @@ public class HostsPanel extends JPanel implements HostsObserver{
         this.setBackground(null);
         this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createMatteBorder(2,2,2,2, Color.gray),"Hosts"));
 
-        this.addHostButton = new JButton("Add new host");
+        this.addHostButton = new AddHostButton(this.controller);
 
         this.addHostButton.addActionListener(new ActionListener(){
             @Override
