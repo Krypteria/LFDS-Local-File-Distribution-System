@@ -105,8 +105,8 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
     // ---- Header ----
     private void sendHeader(String fileName, String header) throws ClientRunTimeException{
         try {
-            header = header.substring(0, header.length() - 1); //elimino el ultimo salto de linea
-            header = ""+this.totalFileSize + "\n" + fileName + "\n" + header; //añado tamaño total y nombre del archivo
+            header = header.substring(0, header.length() - 1); //last \n deleted
+            header = ""+this.totalFileSize + "\n" + fileName + "\n" + header;
 
             this.output = new DataOutputStream(new BufferedOutputStream(this.clientSocket.getOutputStream()));
             this.output.writeUTF(header);

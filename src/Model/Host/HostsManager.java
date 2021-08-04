@@ -1,4 +1,4 @@
-package Model;
+package Model.Host;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,6 +9,8 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import Model.TransferObject;
+import Model.UseState;
 import Model.Exceptions.HostRunTimeException;
 import Model.Observers.HostsObserver;
 import Model.Observers.Observable;

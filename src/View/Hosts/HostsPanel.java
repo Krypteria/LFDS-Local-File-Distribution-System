@@ -1,8 +1,8 @@
 package View.Hosts;
 
 import Controller.Controller;
-import Model.Host;
 import Model.Exceptions.HostRunTimeException;
+import Model.Host.Host;
 import Model.Observers.HostsObserver;
 import View.FileManagmentPanel;
 import View.MainWindow;
@@ -88,7 +88,7 @@ public class HostsPanel extends JPanel implements HostsObserver{
             int status = dialog.open();
     
             if(status == 1){
-                controller.addNewHost(dialog.getHostName(), dialog.getHostAddr());
+                controller.addNewHost(dialog.getHostName().trim(), dialog.getHostAddr());
                 fileManagmentPanel.removeAllSelectedHosts();
             }
         }

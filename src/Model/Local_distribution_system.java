@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import Model.Client.ClientsManager;
 import Model.Exceptions.HostRunTimeException;
 import Model.Exceptions.ServerRunTimeException;
+import Model.Host.HostsManager;
 import Model.Observers.HostsObserver;
 import Model.Observers.ServerObserver;
 import Model.Observers.TransferencesObserver;

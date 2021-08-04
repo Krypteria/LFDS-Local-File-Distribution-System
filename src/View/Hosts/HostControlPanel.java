@@ -13,8 +13,8 @@ import java.awt.event.ActionListener;
 import java.awt.Dimension;
 import java.awt.Color;
 import Controller.Controller;
-import Model.Host;
 import Model.Exceptions.HostRunTimeException;
+import Model.Host.Host;
 import View.FileManagmentPanel;
 import View.MainWindow;
 import View.Buttons.DeleteButton;
@@ -103,7 +103,7 @@ public class HostControlPanel extends JPanel{
             int status = dialog.open();
     
             if(status == 1){
-                controller.editHost(dialog.getHostName(), this.hostAddrLabel.getText(), dialog.getHostAddr());
+                controller.editHost(dialog.getHostName().trim(), this.hostAddrLabel.getText(), dialog.getHostAddr());
                 fileManagmentPanel.removeAllSelectedHosts();
             }
         }

@@ -1,6 +1,9 @@
-package Model;
+package Model.Host;
 
 import org.json.JSONObject;
+
+import Model.TransferObject;
+import Model.UseState;
 
 public class Host implements UseState{
     private String name;

@@ -75,7 +75,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
             this.transferenceObserversList = new ArrayList<TransferencesObserver>();
             this.directoryStack = new Stack<Pair<String, Integer>>();
         }
-        catch(IOException e){ //esta excepcion va a estar dificil ver como mostrarla por pantalla
+        catch(IOException e){
             throw new ServerRunTimeException("Error during server socket opening");
         }
     }
