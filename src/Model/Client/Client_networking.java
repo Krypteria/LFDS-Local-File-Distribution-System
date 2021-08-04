@@ -50,8 +50,6 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
             this.totalFileSize = 0;
             this.totalBytesReaded = 0;
 
-            this.clientSocket = new Socket();
-            this.clientSocket.connect(new InetSocketAddress(dst_addr, this.PORT));
             this.transferenceObserversList = new ArrayList<TransferencesObserver>();
             this.buffer = new byte[this.BUFFERSIZE];
             this.filePaths = new ArrayList<Pair<String, Long>>();
@@ -59,13 +57,19 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
         catch(UnknownHostException e){
             System.out.println("Destination address not valid");
         }
-        catch(IOException e){
-            System.out.println("Error during connection");
-        }
+        
     }
 
     public void send(File file){
         try{
+            this.clientSocket = new Socket();
+            try{
+                this.clientSocket.connect(new InetSocketAddress(dst_addr, this.PORT));
+            }
+            catch(IOException e){
+                throw new ClientRunTimeException("The server " + dst_addr + " is not avalaible");
+            }
+
             this.notifyAddToTransferenceObservers(file.getName());
             if(file.isDirectory()){
                 this.sendHeader(file.getName(), this.getDirectoryHeader(file, 1));

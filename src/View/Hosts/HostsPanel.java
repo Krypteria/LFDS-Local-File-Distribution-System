@@ -131,7 +131,6 @@ public class HostsPanel extends JPanel implements HostsObserver{
             checkBox.setBackground(this.backgroundColor);
 
             HostControlPanel hostPanel = new HostControlPanel(this.controller, this.parent, host, checkBox, this.fileManagmentPanel);
-            
             this.hostPanelMap.put(host.getAddress(), hostPanel);
             hostControlPanel.add(hostPanel);
         }

@@ -14,7 +14,7 @@ import View.Hosts.HostsPanel;
 import View.Transferences.TransferencesPanel;
 
 public class MainWindow extends JFrame{
-    private final int MAX_WIDTH = 880;
+    private final int MAX_WIDTH = 830;
     private final int MAX_HEIGHT = 555;
 
     private Controller controller;
@@ -33,7 +33,7 @@ public class MainWindow extends JFrame{
         GridBagLayout layout = new GridBagLayout();
 
         //Setting the layout dimensions
-        layout.columnWidths = new int[] {530,350};
+        layout.columnWidths = new int[] {480,350};
         layout.rowHeights = new int[] {370,300};
         layout.columnWeights = new double[] {1,1};
         layout.rowWeights = new double[] {1,1,1};

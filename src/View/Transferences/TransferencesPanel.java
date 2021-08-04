@@ -4,15 +4,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.awt.BorderLayout;
@@ -28,7 +25,7 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
     private final String RECEIVE_MODE = "receive";
 
     private final Color backgroundColor = Color.white;
-    private final int MAX_WIDTH = 530;
+    private final int MAX_WIDTH = 488;
 
     private Controller controller;
 
@@ -38,9 +35,6 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
     private JPanel transferencesContentPanel;
     
     private HashMap<String, TransferenceControlPanel> clientTransferencesMap, serverTransferencesMap;
-
-    JButton test;
-    private int borrar = 0;
 
     public TransferencesPanel(Controller controller, MainWindow parent, HostsPanel hostsPanel){
         this.parent = parent;
@@ -57,21 +51,14 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
         this.setLayout(new BorderLayout());
         this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createMatteBorder(2,2,2,2, Color.gray),"Transferences"));
 
-        this.transferencesContentPanel = new JPanel(new BorderLayout(5,5));
+        this.transferencesContentPanel = new JPanel();
+        this.transferencesContentPanel.setLayout(new BoxLayout(this.transferencesContentPanel, BoxLayout.PAGE_AXIS));
         this.transferencesContentPanel.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
         this.transferencesContentPanel.setBackground(this.backgroundColor);
         this.clearTransferences();
 
-        test = new JButton("test");
-        test.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clientTransferencesMap.put("192.168.1."+borrar, new TransferenceControlPanel("Sending", "source", "dst", "name"));
-                borrar++;
-                updateTransferenceContent();
-            }
-        });
-        this.add(test, BorderLayout.PAGE_START);
+        this.setPreferredSize(new Dimension(MAX_WIDTH, 100));
+        this.setMaximumSize(new Dimension(MAX_WIDTH, 100));
         this.add(this.transferencesContentPanel, BorderLayout.CENTER);
         this.setVisible(true);
     }
@@ -94,8 +81,9 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
     @Override
     public void addTransference(String mode, String src_addr, String dst_addr, String fileName) {
         if(mode.equals(SEND_MODE)){
-            this.hostsPanel.enableHostOptions(src_addr, false);
+            System.out.println(src_addr + " " + dst_addr);
             this.clientTransferencesMap.put(dst_addr, new TransferenceControlPanel("Sending", src_addr, dst_addr, fileName));
+            this.hostsPanel.enableHostOptions(dst_addr, false);
         }
         else if(mode.equals(RECEIVE_MODE)){
             this.serverTransferencesMap.put(src_addr, new TransferenceControlPanel("Receiving", src_addr, dst_addr, fileName));
@@ -116,8 +104,8 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
     @Override
     public void endTransference(String mode, String addr) {
         if(mode.equals(SEND_MODE)){
-            this.hostsPanel.enableHostOptions(addr, true);
             this.clientTransferencesMap.remove(addr);
+            this.hostsPanel.enableHostOptions(addr, true);
         }
         else if(mode.equals(RECEIVE_MODE)){
             this.serverTransferencesMap.remove(addr);
@@ -141,8 +129,6 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
 
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.PAGE_AXIS));
-        content.setMaximumSize(new Dimension(530,100));
-        content.setPreferredSize(new Dimension(530,100));
         content.setBackground(this.backgroundColor);
 
         for(Map.Entry<String, TransferenceControlPanel> mapElement : this.serverTransferencesMap.entrySet()) {

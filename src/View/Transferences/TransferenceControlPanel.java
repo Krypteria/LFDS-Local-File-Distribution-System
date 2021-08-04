@@ -6,6 +6,7 @@ import java.awt.FlowLayout;
 import java.awt.BorderLayout;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -55,32 +56,44 @@ public class TransferenceControlPanel extends JPanel{
         this.progressBar.setStringPainted(true);
 
         JPanel modeInfo = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JPanel headerInfo = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JPanel contentInfo = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel firstContentInfo = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel secondContentInfo = new JPanel(new FlowLayout(FlowLayout.LEFT));
         modeInfo.setPreferredSize(new Dimension(MAX_WIDTH,30));
         modeInfo.setMaximumSize(new Dimension(MAX_WIDTH,30));
-        headerInfo.setMaximumSize(new Dimension(MAX_WIDTH,22));
-        contentInfo.setMaximumSize(new Dimension(MAX_WIDTH,22));
+        firstContentInfo.setMaximumSize(new Dimension(MAX_WIDTH,22));
+        secondContentInfo.setMaximumSize(new Dimension(MAX_WIDTH,22));
 
         modeInfo.setBackground(this.backgroundColor);
-        headerInfo.setBackground(this.backgroundColor);
-        contentInfo.setBackground(this.backgroundColor);
+        firstContentInfo.setBackground(this.backgroundColor);
+        secondContentInfo.setBackground(this.backgroundColor);
 
         modeInfo.add(this.modeLabel);
-        
-        headerInfo.add(new JLabel("Source:"));
-        headerInfo.add(this.src_addrLabel);
-        headerInfo.add(new JLabel("Destination:"));
-        headerInfo.add(this.dst_addrLabel);
-        
-        contentInfo.add(new JLabel("File name:"));
-        contentInfo.add(this.fileNameLabel);
-        contentInfo.add(new JLabel("Progress:"));
-        contentInfo.add(this.progressBar);
+
+        JLabel sourceLabel = new JLabel("From:");
+        JLabel destinationLabel = new JLabel("To:");
+        JLabel filenameTitleLabel = new JLabel("File name:");
+        JLabel progressLabel = new JLabel("Progress:");
+
+        sourceLabel.setPreferredSize(new Dimension(35,25));
+        destinationLabel.setPreferredSize(new Dimension(35,25));
+        filenameTitleLabel.setPreferredSize(new Dimension(60,25));
+        progressLabel.setPreferredSize(new Dimension(60,25));
+
+        firstContentInfo.add(sourceLabel);
+        firstContentInfo.add(this.src_addrLabel);
+        firstContentInfo.add(Box.createRigidArea(new Dimension(20,0)));
+        firstContentInfo.add(filenameTitleLabel);
+        firstContentInfo.add(this.fileNameLabel);
+
+        secondContentInfo.add(destinationLabel);
+        secondContentInfo.add(this.dst_addrLabel);
+        secondContentInfo.add(Box.createRigidArea(new Dimension(20,0)));
+        secondContentInfo.add(progressLabel);
+        secondContentInfo.add(this.progressBar);
     
         this.add(modeInfo, BorderLayout.PAGE_START);
-        this.add(headerInfo, BorderLayout.CENTER);
-        this.add(contentInfo, BorderLayout.PAGE_END);
+        this.add(firstContentInfo, BorderLayout.CENTER);
+        this.add(secondContentInfo, BorderLayout.PAGE_END);
         this.setMaximumSize(new Dimension(530,90));
         this.setBorder(BorderFactory.createMatteBorder(1, 1, 2, 1, Color.gray));
         this.setVisible(true);

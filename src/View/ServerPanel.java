@@ -37,9 +37,9 @@ public class ServerPanel extends JPanel implements ServerObserver{
     private final String RUNNING = "Running";
     private final String STOPPED = "Stopped";
 
-    private final String WAITING = "Waiting for transferences";
-    private final String CLOSED = "Server closed, transferences disabled";
-    private final String BUSY = "Managing transferences";
+    private final String WAITING = "Waiting for transferences.";
+    private final String CLOSED = "Server closed, transferences disabled.";
+    private final String BUSY = "Managing transferences.";
 
 
     private String downloadRoute;
@@ -108,18 +108,17 @@ public class ServerPanel extends JPanel implements ServerObserver{
         
         //Task Panel
         JPanel firstTaskPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JPanel secondTaskPanel = new JPanel();
-        secondTaskPanel.setLayout(new BoxLayout(secondTaskPanel, BoxLayout.PAGE_AXIS));
+        JPanel secondTaskPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         firstTaskPanel.setBackground(this.backgroundColor);
-        secondTaskPanel.setBackground(Color.orange);
+        secondTaskPanel.setBackground(this.backgroundColor);
 
         firstTaskPanel.setPreferredSize(new Dimension(MAX_WIDTH, 23));
         firstTaskPanel.setMaximumSize(new Dimension(MAX_WIDTH, 23));
         secondTaskPanel.setPreferredSize(new Dimension(MAX_WIDTH, 40));
         secondTaskPanel.setMaximumSize(new Dimension(MAX_WIDTH, 40));
 
-        this.taskTitleLabel = new JLabel("Tasks");
+        this.taskTitleLabel = new JLabel("Tasks:");
         this.taskInfoLabel = new JLabel(WAITING);
 
         firstTaskPanel.add(this.taskTitleLabel);
