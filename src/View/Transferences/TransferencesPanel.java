@@ -4,12 +4,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.awt.BorderLayout;
@@ -33,8 +36,11 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
     private HostsPanel hostsPanel;
 
     private JPanel transferencesContentPanel;
-
+    
     private HashMap<String, TransferenceControlPanel> clientTransferencesMap, serverTransferencesMap;
+
+    JButton test;
+    private int borrar = 0;
 
     public TransferencesPanel(Controller controller, MainWindow parent, HostsPanel hostsPanel){
         this.parent = parent;
@@ -56,6 +62,16 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
         this.transferencesContentPanel.setBackground(this.backgroundColor);
         this.clearTransferences();
 
+        test = new JButton("test");
+        test.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clientTransferencesMap.put("192.168.1."+borrar, new TransferenceControlPanel("Sending", "source", "dst", "name"));
+                borrar++;
+                updateTransferenceContent();
+            }
+        });
+        this.add(test, BorderLayout.PAGE_START);
         this.add(this.transferencesContentPanel, BorderLayout.CENTER);
         this.setVisible(true);
     }
