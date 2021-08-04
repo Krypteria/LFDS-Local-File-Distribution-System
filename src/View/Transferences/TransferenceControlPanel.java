@@ -58,10 +58,10 @@ public class TransferenceControlPanel extends JPanel{
         JPanel modeInfo = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JPanel firstContentInfo = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JPanel secondContentInfo = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        modeInfo.setPreferredSize(new Dimension(MAX_WIDTH,30));
-        modeInfo.setMaximumSize(new Dimension(MAX_WIDTH,30));
-        firstContentInfo.setMaximumSize(new Dimension(MAX_WIDTH,22));
-        secondContentInfo.setMaximumSize(new Dimension(MAX_WIDTH,22));
+        modeInfo.setPreferredSize(new Dimension(MAX_WIDTH,25));
+        modeInfo.setMaximumSize(new Dimension(MAX_WIDTH,26));
+        firstContentInfo.setMaximumSize(new Dimension(MAX_WIDTH,25));
+        secondContentInfo.setMaximumSize(new Dimension(MAX_WIDTH,25));
 
         modeInfo.setBackground(this.backgroundColor);
         firstContentInfo.setBackground(this.backgroundColor);
@@ -94,7 +94,7 @@ public class TransferenceControlPanel extends JPanel{
         this.add(modeInfo, BorderLayout.PAGE_START);
         this.add(firstContentInfo, BorderLayout.CENTER);
         this.add(secondContentInfo, BorderLayout.PAGE_END);
-        this.setMaximumSize(new Dimension(530,90));
+        this.setMaximumSize(new Dimension(530,74));
         this.setBorder(BorderFactory.createMatteBorder(1, 1, 2, 1, Color.gray));
         this.setVisible(true);
     }

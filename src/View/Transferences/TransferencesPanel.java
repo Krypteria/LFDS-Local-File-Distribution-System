@@ -130,6 +130,7 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.PAGE_AXIS));
         content.setBackground(this.backgroundColor);
+        content.setPreferredSize(new Dimension(MAX_WIDTH,175));
 
         for(Map.Entry<String, TransferenceControlPanel> mapElement : this.serverTransferencesMap.entrySet()) {
             content.add(mapElement.getValue());

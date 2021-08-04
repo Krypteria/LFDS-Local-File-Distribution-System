@@ -1,8 +1,11 @@
 package View;
 
+import javax.swing.UIManager.*;
+
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import java.awt.Insets;
 import java.awt.GridBagLayout;
@@ -22,7 +25,22 @@ public class MainWindow extends JFrame{
 
     public MainWindow(Controller controller){
         this.controller = controller;
+        this.enableNimbus();
         this.initGUI();
+    }
+
+    private void enableNimbus(){
+        try{
+            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        }
+        catch (Exception e) {
+            System.out.println("Nimbus not loaded");
+        }
     }
 
     private void initGUI(){

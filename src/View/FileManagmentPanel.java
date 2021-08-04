@@ -128,7 +128,7 @@ public class FileManagmentPanel extends JPanel{
 
     private void performSelectFileAction(){
         int status = this.fileChooser.showOpenDialog(this.parent);
-        if(status == 0){ //
+        if(status == 0){
             this.selectedFile = this.fileChooser.getSelectedFile();
             if(selectedFile.getName().length() > 30){
                 this.selectedFileLabel.setText(selectedFile.getName().substring(0, 30) + "...");
@@ -195,7 +195,7 @@ public class FileManagmentPanel extends JPanel{
             nameLabel.setPreferredSize(new Dimension(120,25));
             addrLabel.setPreferredSize(new Dimension(100,25));
 
-            selectedHostPanel.add(new JLabel("[*]"));
+            selectedHostPanel.add(new JLabel("[-]"));
             selectedHostPanel.add(Box.createRigidArea(new Dimension(1,0)));
             selectedHostPanel.add(nameLabel);
             selectedHostPanel.add(Box.createRigidArea(new Dimension(1,0)));

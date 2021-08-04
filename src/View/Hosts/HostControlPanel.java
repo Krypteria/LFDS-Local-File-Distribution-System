@@ -82,8 +82,8 @@ public class HostControlPanel extends JPanel{
         this.add(this.editHostButton);
         this.add(this.deleteHostButton);
 
-        this.setMaximumSize(new Dimension(500,50));
-        this.setPreferredSize(new Dimension(500,50));
+        this.setMaximumSize(new Dimension(500,48));
+        this.setPreferredSize(new Dimension(500,48));
         this.setBackground(Color.white);
         this.setVisible(true);
     }
