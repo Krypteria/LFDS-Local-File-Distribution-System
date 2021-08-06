@@ -1,8 +1,10 @@
 package Model;
 
 import java.net.Inet4Address;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -69,8 +71,8 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
             this.numberOfClients = 0;
             this.avalaible = true;
             this.endServerActivity = false;
-            this.currentAddress = Inet4Address.getLocalHost().getHostAddress();
             this.defaultRoute = FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath();
+            this.getLocalAddress();
 
             this.serverSocket = new ServerSocket(this.PORT);
             this.buffer = new byte[this.BUFFERSIZE];
@@ -80,6 +82,17 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
         }
         catch(IOException e){
             throw new ServerRunTimeException("Error during server socket opening");
+        }
+    }
+
+    private void getLocalAddress() throws UnknownHostException{
+        try {
+            Socket socket = new Socket();
+            socket.connect(new InetSocketAddress("google.com", 80));
+            this.currentAddress = socket.getLocalAddress().getHostAddress();
+            socket.close();
+        } catch (IOException e) {
+            this.currentAddress = Inet4Address.getLocalHost().getHostAddress();
         }
     }
 
