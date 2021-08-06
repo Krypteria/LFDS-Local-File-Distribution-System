@@ -13,7 +13,7 @@ import org.json.JSONTokener;
 
 public class Local_distribution_system_DAO{
 
-    private final String directoryPath = "app/config/"; 
+    private final String directoryPath = System.getProperty("user.home")+"/config/"; 
     private final String fileName = "config.json";
 
     public void saveAppState(TransferObject transferObject) throws FileNotFoundException{
