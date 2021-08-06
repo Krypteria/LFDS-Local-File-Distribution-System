@@ -24,6 +24,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -40,10 +41,12 @@ public class HostsPanel extends JPanel implements HostsObserver{
     private FileManagmentPanel fileManagmentPanel;
 
     private List<Host> hostList;
+    private List<String> addressOnTransference;
     private HashMap<String, HostControlPanel> hostPanelMap;
 
     public HostsPanel(Controller controller, MainWindow parent, FileManagmentPanel fileManagmentPanel){
         this.hostPanelMap = new HashMap<String, HostControlPanel>();
+        this.addressOnTransference = new ArrayList<String>();
         this.fileManagmentPanel = fileManagmentPanel;
         this.controller = controller;
         this.parent = parent;
@@ -131,6 +134,10 @@ public class HostsPanel extends JPanel implements HostsObserver{
             checkBox.setBackground(this.backgroundColor);
 
             HostControlPanel hostPanel = new HostControlPanel(this.controller, this.parent, host, checkBox, this.fileManagmentPanel);
+            if(!this.addressOnTransference.isEmpty() && this.addressOnTransference.contains(host.getAddress())){
+                hostPanel.enableHostOptions(false);
+            }
+
             this.hostPanelMap.put(host.getAddress(), hostPanel);
             hostControlPanel.add(hostPanel);
         }
@@ -142,8 +149,20 @@ public class HostsPanel extends JPanel implements HostsObserver{
         this.hostsContentPanel.repaint();
     }
 
-    public void enableHostOptions(String address, boolean enable){
+    private void enableHostOptions(String address, boolean enable){
         this.hostPanelMap.get(address).enableHostOptions(enable);
+    }
+
+    public void addressOnTransfer(String address){
+        System.out.println("Añadiendo " + address); 
+        this.addressOnTransference.add(address);
+        this.enableHostOptions(address, false);
+    }
+
+    public void addressNotOnTransfer(String address){
+        System.out.println("Quitando " + address);
+        this.addressOnTransference.remove(address);
+        this.enableHostOptions(address, true);
     }
 
 }

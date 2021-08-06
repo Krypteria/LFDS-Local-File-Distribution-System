@@ -149,7 +149,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
     
     //Transference methods
     @Override
-    public void run() throws ServerRunTimeException{
+    public void run(){
         while(!this.endServerActivity){
             try{
                 Socket clientSocket = this.serverSocket.accept();
@@ -161,16 +161,21 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
                 }.start();
             }
             catch(IOException e){
-                this.numberOfClients--;
-                throw new ServerRunTimeException("Error waiting for connections");
+                this.notifyException("Error waiting for connections");
             }
         }
     }
 
-    private void processClientTransference(Socket clientSocket) throws ServerRunTimeException{
-        this.directoryStack.push(new Pair<String, Integer>(this.defaultRoute, 0));
-        this.processHeader(clientSocket, this.receiveHeader(clientSocket));
-        this.numberOfClients--;
+    private void processClientTransference(Socket clientSocket){
+        try{
+            this.directoryStack.push(new Pair<String, Integer>(this.defaultRoute, 0));
+            this.processHeader(clientSocket, this.receiveHeader(clientSocket));
+            this.numberOfClients--;
+        }
+        catch(ServerRunTimeException e){
+            this.numberOfClients--;
+            this.notifyException(e.getMessage());
+        }
     }
 
     private String receiveHeader(Socket clientSocket) throws ServerRunTimeException{
@@ -179,6 +184,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
             this.input = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
             header = this.input.readUTF();
         } catch (IOException e) {
+            this.notifyRemoveToTransferenceObservers(clientSocket.getInetAddress().toString().substring(1));
             throw new ServerRunTimeException("Error while receiving header");
         }
         
@@ -259,9 +265,11 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
             }
         }
         catch(FileNotFoundException e){
+            this.notifyRemoveToTransferenceObservers(clientSocket.getInetAddress().toString().substring(1));
             throw new ServerRunTimeException("Error, file not found");
         }
         catch(IOException e){
+            this.notifyRemoveToTransferenceObservers(clientSocket.getInetAddress().toString().substring(1));
             throw new ServerRunTimeException("Error during file processing");
         }
     }
@@ -315,6 +323,13 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
             if(this.numberOfClients == 1){
                 this.enableServerControlls(true);
             }
+        }
+    }
+
+    private void notifyException(String message){
+        System.out.println("entro por aquí");
+        for(TransferencesObserver observer : this.transferenceObserversList){
+            observer.notifyException(message);
         }
     }
 

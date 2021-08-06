@@ -82,7 +82,7 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
     public void addTransference(String mode, String src_addr, String dst_addr, String fileName) {
         if(mode.equals(SEND_MODE)){
             this.clientTransferencesMap.put(dst_addr, new TransferenceControlPanel("Sending", src_addr, dst_addr, fileName));
-            this.hostsPanel.enableHostOptions(dst_addr, false);
+            this.hostsPanel.addressOnTransfer(dst_addr);
         }
         else if(mode.equals(RECEIVE_MODE)){
             this.serverTransferencesMap.put(src_addr, new TransferenceControlPanel("Receiving", src_addr, dst_addr, fileName));
@@ -104,7 +104,7 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
     public void endTransference(String mode, String addr) {
         if(mode.equals(SEND_MODE)){
             this.clientTransferencesMap.remove(addr);
-            this.hostsPanel.enableHostOptions(addr, true);
+            this.hostsPanel.addressNotOnTransfer(addr);
         }
         else if(mode.equals(RECEIVE_MODE)){
             this.serverTransferencesMap.remove(addr);

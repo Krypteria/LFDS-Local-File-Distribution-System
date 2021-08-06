@@ -132,5 +132,8 @@ public class HostControlPanel extends JPanel{
         if(enable){
             this.sendBox.setSelected(false);
         }
+        else{
+            this.sendBox.setSelected(true);
+        }
     }
 }
