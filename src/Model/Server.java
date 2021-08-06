@@ -232,6 +232,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
 
     private void receiveFile(Socket clientSocket, String filePath, Long fileSize) throws ServerRunTimeException{
         try{
+            filePath.replace("\\", "\\\\");
             this.output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(filePath))));
 
             //File lenght could be much bigger than the Integer max value
@@ -248,6 +249,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
                 this.output.write(this.buffer, 0, bytesReaded);
                 this.output.flush();
                 fileSize -= bytesReaded;
+
                 totalBytesReaded += bytesReaded;
                 if(integerMaxValueExceeded && fileSize < Integer.MAX_VALUE){
                     integerFileSizeValue = Math.toIntExact(fileSize);
