@@ -1,6 +1,7 @@
 {
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
+        "Local_file_distribution_system/jars/json.jar",
         "jars/json.jar"
     ]
 }
