@@ -14,6 +14,7 @@ import Controller.Controller;
 public abstract class CustomButton extends JButton implements MouseListener {
 	
 	protected Controller controller;
+	private final String basePath= "app/icons/";
 	private String imagePath;
 	private String imagePath_large;
 	private String tooltipText;
@@ -22,8 +23,8 @@ public abstract class CustomButton extends JButton implements MouseListener {
 	
 	public CustomButton(Controller c, String imagePath, String imagePath_large, String tt, int w, int h) {
 		this.controller = c;
-		this.imagePath = imagePath;
-		this.imagePath_large = imagePath_large;
+		this.imagePath = basePath + imagePath;
+		this.imagePath_large = basePath + imagePath_large;
 		this.tooltipText = tt;
 		this.width = w;
 		this.height = h;

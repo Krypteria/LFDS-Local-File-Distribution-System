@@ -23,16 +23,15 @@ import java.io.FileNotFoundException;
 
 public class Client_networking implements TransferenceObservable<TransferencesObserver>{
     
-    private final String SEND_MODE = "send";
-    private final int PORT = 2222;
+    private final int PORT = 2020;
     private final int BUFFERSIZE = 65536;
+    private final String SEND_MODE = "send";
 
     private Socket clientSocket;
     private byte[] buffer;
     
     private DataOutputStream output;
     private DataInputStream input;
-    private List<Pair<String, Long>> filePaths;
     
     private String src_addr;
     private String dst_addr;
@@ -40,6 +39,7 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
     private long totalFileSize;
     private long totalBytesReaded;
 
+    private List<Pair<String, Long>> filePaths;
     private List<TransferencesObserver> transferenceObserversList;
 
     public Client_networking(String dst_addr){
@@ -57,7 +57,6 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
         catch(UnknownHostException e){
             System.out.println("Destination address not valid");
         }
-        
     }
 
     public void send(File file){

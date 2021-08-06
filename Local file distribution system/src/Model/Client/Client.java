@@ -8,6 +8,7 @@ public class Client implements Runnable{
 
     private ClientsManager clientsManager;
     private Client_networking networking;
+    
     private File file;
     private String dst_addr;
 

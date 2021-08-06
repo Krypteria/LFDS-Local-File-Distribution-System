@@ -93,7 +93,7 @@ public class ServerPanel extends JPanel implements ServerObserver{
 
         this.serverStatusLabel = new JLabel(RUNNING);
         this.serverStatusLabel.setForeground(Color.getHSBColor(greenColor[0], greenColor[1], greenColor[2]));
-        this.serverPortLabel = new JLabel("2222");
+        this.serverPortLabel = new JLabel("2020");
         
         firstStatusPanel.add(new JLabel("Status:"));
         firstStatusPanel.add(Box.createRigidArea(new Dimension(10,0)));

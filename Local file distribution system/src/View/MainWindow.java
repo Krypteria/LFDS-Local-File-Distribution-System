@@ -2,6 +2,10 @@ package View;
 
 import javax.swing.UIManager.*;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -26,6 +30,7 @@ public class MainWindow extends JFrame{
     public MainWindow(Controller controller){
         this.controller = controller;
         this.enableNimbus();
+        this.setIcon();
         this.initGUI();
     }
 
@@ -43,8 +48,12 @@ public class MainWindow extends JFrame{
         }
     }
 
+    private void setIcon(){
+        ImageIcon icon = new ImageIcon("app/icons/appicon.png");
+        setIconImage(icon.getImage()); 
+    }
     private void initGUI(){
-        this.setTitle("File transfer system");
+        this.setTitle("LFDS: Local file distribution system");
         this.setSize(new Dimension(MAX_WIDTH, MAX_HEIGHT));
 
         this.mainPanel = new JPanel();
@@ -71,10 +80,24 @@ public class MainWindow extends JFrame{
         setJPanelLayoutConfig(fileManagmentPanel, constraints, 1, 0, 1, 1, true);
         setJPanelLayoutConfig(transferencePanel, constraints, 0, 1, 1, 1, true);
 
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent event) {
+                exitProcedure();
+            }
+        });
+
         this.add(mainPanel);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
         this.setVisible(true);
+    }
+
+    private void exitProcedure(){
+        this.controller.closeServer();
+        this.dispose();
+        System.exit(0);
     }
     
 

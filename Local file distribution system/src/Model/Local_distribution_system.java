@@ -22,9 +22,10 @@ public class Local_distribution_system implements UseState{
     public Local_distribution_system(){
         this.hostsManager = new HostsManager();
         this.clientsManager = new ClientsManager();
+
         this.server = new Server();
-        this.openServer();
-        
+        this.server.openProcedure();
+
         this.loadAppState();
     }
 
@@ -44,6 +45,10 @@ public class Local_distribution_system implements UseState{
     public void changeDefaultDownloadRoute(String route){
         this.server.changeDefaultDownloadRoute(route);
         this.saveAppState();
+    }
+
+    public void exitProcedure(){
+        this.server.exitProcedure();
     }
 
     //Hosts methods
@@ -106,6 +111,7 @@ public class Local_distribution_system implements UseState{
         this.clientsManager.addTransferenceObserver(observer);
     }
 
+    //Serialization methods
     @Override
     public void setState(TransferObject transferObject) {
         if(transferObject != null){

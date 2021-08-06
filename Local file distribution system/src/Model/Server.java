@@ -29,8 +29,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class Server implements Runnable, Observable<ServerObserver>, TransferenceObservable<TransferencesObserver>, UseState{
-    private final int PORT = 2222;
+    
+    private final int PORT = 2020;
     private final int BUFFERSIZE = 65536;
+    
     private final String SEPARATOR = "\\";
     private final String RECEIVE_MODE = "receive";
     
@@ -38,18 +40,19 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
     private final String RUNNING = "Running";
     private final String STOPPED = "Stopped";
 
-    private String defaultRoute;
-
+    
     private List<ServerObserver> serverObserversList;
     private List<TransferencesObserver> transferenceObserversList;
-
+    
     private ServerSocket serverSocket;
     private byte[] buffer;
-
+    
     private Stack<Pair<String, Integer>> directoryStack;
-
+    
     private DataOutputStream output;
     private DataInputStream input;
+    
+    private String defaultRoute;
 
     private String currentAddress;
 
@@ -114,6 +117,14 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
         else{
             throw new ServerRunTimeException("The server cannot be shut down as it is performing operations, try when it is done");
         }
+    }
+
+    public void openProcedure(){
+        this.openServer();
+    }
+
+    public void exitProcedure(){
+        this.closeServer();
     }
 
     public void changeDefaultDownloadRoute(String route){

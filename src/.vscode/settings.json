@@ -1,7 +1,0 @@
-{
-    "java.project.referencedLibraries": [
-        "lib/**/*.jar",
-        "d:\\Biblioteca\\Documentos\\Github\\Traffic_simulator\\jars\\json.jar",
-        "d:\\Escritorio\\json.jar"
-    ]
-}
