@@ -198,6 +198,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
 
         this.totalFileSize = Long.parseLong(headerInfo.nextLine());
         generalFileName = headerInfo.nextLine();
+        System.out.println(header);
 
         this.notifyAddToTransferenceObservers(generalFileName, src_addr);
         while(headerInfo.hasNextLine()){
@@ -238,6 +239,7 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
 
     private void receiveFile(Socket clientSocket, String filePath, Long fileSize) throws ServerRunTimeException{
         try{
+            System.out.println(filePath + " " + fileSize);
             filePath.replace("\\", "\\\\");
             this.output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(filePath))));
 
@@ -249,11 +251,13 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
                 integerMaxValueExceeded = false;
             }
 
-            int bytesReaded;
+            int bytesReaded = 0;
             long totalBytesReaded = 0;
+            // EL problema está en que nunca se decrementa dentro la variable integerFilesize por lo que se lanza con valor fileSize hasta que chupa todo el buffer
             while(integerFileSizeValue > 0 && (bytesReaded = this.input.read(this.buffer, 0, Math.min(this.BUFFERSIZE, integerFileSizeValue))) >= 0){
                 this.output.write(this.buffer, 0, bytesReaded);
                 this.output.flush();
+                //System.out.println(bytesReaded);
                 fileSize -= bytesReaded;
 
                 totalBytesReaded += bytesReaded;
@@ -261,8 +265,10 @@ public class Server implements Runnable, Observable<ServerObserver>, Transferenc
                     integerFileSizeValue = Math.toIntExact(fileSize);
                     integerMaxValueExceeded = false;
                 }
+                System.out.println(filePath + " " +integerFileSizeValue);
                 this.notifyUpdateToTransferenceObservers(this.getProgress(totalBytesReaded), clientSocket.getInetAddress().toString().substring(1)); 
             }
+            //System.out.println(bytesReaded);
         }
         catch(FileNotFoundException e){
             this.notifyRemoveToTransferenceObservers(clientSocket.getInetAddress().toString().substring(1));

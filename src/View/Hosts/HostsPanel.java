@@ -154,13 +154,11 @@ public class HostsPanel extends JPanel implements HostsObserver{
     }
 
     public void addressOnTransfer(String address){
-        System.out.println("Añadiendo " + address); 
         this.addressOnTransference.add(address);
         this.enableHostOptions(address, false);
     }
 
     public void addressNotOnTransfer(String address){
-        System.out.println("Quitando " + address);
         this.addressOnTransference.remove(address);
         this.enableHostOptions(address, true);
     }
