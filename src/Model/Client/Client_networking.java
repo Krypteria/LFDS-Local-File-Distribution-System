@@ -70,6 +70,8 @@ public class Client_networking implements TransferenceObservable<TransferencesOb
             }
 
             this.notifyAddToTransferenceObservers(file.getName());
+            this.notifyAddToTransferenceObservers(file.getName());
+
             if(file.isDirectory()){
                 this.sendHeader(file.getName(), this.getDirectoryHeader(file, 1));
                 sendFiles(file);

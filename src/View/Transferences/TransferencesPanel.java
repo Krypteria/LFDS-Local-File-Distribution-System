@@ -81,7 +81,6 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
     @Override
     public void addTransference(String mode, String src_addr, String dst_addr, String fileName) {
         if(mode.equals(SEND_MODE)){
-            System.out.println(src_addr + " " + dst_addr);
             this.clientTransferencesMap.put(dst_addr, new TransferenceControlPanel("Sending", src_addr, dst_addr, fileName));
             this.hostsPanel.enableHostOptions(dst_addr, false);
         }
@@ -130,7 +129,6 @@ public  class TransferencesPanel extends JPanel implements TransferencesObserver
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.PAGE_AXIS));
         content.setBackground(this.backgroundColor);
-        content.setPreferredSize(new Dimension(MAX_WIDTH,175));
 
         for(Map.Entry<String, TransferenceControlPanel> mapElement : this.serverTransferencesMap.entrySet()) {
             content.add(mapElement.getValue());
