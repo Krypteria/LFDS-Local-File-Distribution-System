@@ -53,7 +53,7 @@ public class MainWindow extends JFrame{
         setIconImage(icon.getImage()); 
     }
     private void initGUI(){
-        this.setTitle("LFDS: Local file distribution system");
+        this.setTitle("LFDS: Local File Distribution System");
         this.setSize(new Dimension(MAX_WIDTH, MAX_HEIGHT));
 
         this.mainPanel = new JPanel();
