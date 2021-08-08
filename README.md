@@ -1,4 +1,4 @@
-# Local file distribution system
+# LFDS: Local File Distribution System
 
 LFDS es una aplicación que permite tanto recibir como enviar cualquier tipo de archivo (audio, imagen, texto, estructuras complejas de directos...) a cualquier equipo o equipos pertenecientes a la red interna con capacidad para manejar más de 50 transferencias en paralelo.
 
