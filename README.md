@@ -1,11 +1,11 @@
 # LFDS: Local File Distribution System
 
-LFDS es una aplicación que permite tanto recibir como enviar cualquier tipo de archivo (audio, imagen, texto, estructuras complejas de directos...) a cualquier equipo o equipos pertenecientes a la red interna con capacidad para manejar más de 50 transferencias en paralelo.
+LFDS es una aplicación que permite tanto recibir como enviar cualquier tipo de archivo (audio, imagen, texto, estructuras complejas de directorios...) a cualquier equipo o equipos pertenecientes a la red interna. <br> La aplicación tiene capacidad para manejar más de 50 transferencias en paralelo.
 
 ![main](https://user-images.githubusercontent.com/55555187/128637751-324cd9a5-fd59-49d1-8f5d-7f9b61439b01.png)
 
 ## Como descargarlo y ejecutarlo
-1. Descargar la última versión de ejecutable (*Local File Distribution System-x.x.exe*) en la pestaña de release.
+1. Descargar la última versión del ejecutable (*Local File Distribution System-x.x.exe*) en la pestaña de release.
 2. Lanzar el ejecutable para instalar la aplicación.
 
 La aplicación es instalada en la ruta *C:\Program Files\Local File Distribution System* y crea automáticamente un <b>acceso directo en el menú Windows y en el escritorio.</b>
