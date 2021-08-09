@@ -12,7 +12,7 @@ La aplicación tiene capacidad para manejar más de 50 transferencias en paralel
 
 La aplicación es instalada en la ruta *C:\Program Files\Local File Distribution System* y crea automáticamente un <b>acceso directo en el menú Windows y en el escritorio.</b>
 ## Motivación
-La idea de crear esta aplicación surge de la necesidad de enviar de forma concurrente ficheros de gran tamaño a varios equipos pertenecientes dentro de una red interna. <br>
+La idea de crear esta aplicación surge de la necesidad de enviar de forma concurrente ficheros de gran tamaño a varios equipos dentro de una red interna. <br>
 
 Con esta aplicación <b>se busca ofrecer una alternativa al uso de dispositivos USB, el uso del correo electrónico, de google drive, de dropbox o incluso de recursos compartidos para transferir archivos desde un equipo a otro.</b> <br>
 
